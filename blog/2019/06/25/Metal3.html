@@ -199,7 +199,7 @@ document.addEventListener("click", function (e) {
 }
 </script>
 <script>
-var mykeywords = ["hybrid", "cloud", "metal3", "baremetal", "stack", "edge", "openstack", "ironic", "openshift", "kubernetes", "operator", "summit", "kubecon", "shiftdev", "metal3-dev-env", "documentation", "development", "talk", "conference", "meetup", "cluster API", "provider", ]
+var mykeywords = ["hybrid", "cloud", "metal3", "baremetal", "stack", "edge", "openstack", "ironic", "openshift", "kubernetes", "OpenStack", "operator", "summit", "kubecon", "shiftdev", "metal3-dev-env", "documentation", "development", "talk", "conference", "meetup", "cluster API", "provider", ]
 autocomplete(document.getElementById("search-input"), mykeywords);
 </script>
 <script src="/assets/js/clipboard.min.js"></script>
@@ -319,7 +319,7 @@ Basically this means you can virtually create any type of object <strong>definit
 
 <p>There are tons of information with regards to CRDs, like the <a href="https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/">k8s official documentation</a>.</p>
 
-<p>The CRD by himself is not useful ‘per se’ as nobody will take care of it (that’s why I said <strong>definition</strong>). It
+<p>The CRD by himself is not useful <code class="language-html highlighter-rouge">per se</code> as nobody will take care of it (that’s why I said <strong>definition</strong>). It
 requires a <code class="language-html highlighter-rouge">controller</code> to watch for those new objects and react to different
 events affecting the object.</p>
 
@@ -444,7 +444,7 @@ wired to routers, switches and power. That server is a ‘baremetal’ server.</
 
 <p>If you are used to cloud providers and instances, you probably don’t know the
 pains of baremetal management… including things such as connecting to the
-virtual console (usually it requires an old java version) to debug issues,
+virtual console (usually it requires an old Java version) to debug issues,
 configuring pxe for provisioning baremetal hosts (or attach ISOs via the virtual console… or insert a CD/DVD physically into the CD carry if you are
 ‘lucky’ enough…), configuring VLANs for traffic isolation, etc.</p>
 
