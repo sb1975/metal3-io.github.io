@@ -23,7 +23,7 @@
     <meta property="og:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes." >
     <meta property="og:site_name" content="Metal³ - Metal Kubed" >
     <meta property="og:article:author" content="The Metal³ - Metal Kubed website team" >
-    <meta property="og:article:published_time" content="2020-03-12 07:47:06 +0000" >
+    <meta property="og:article:published_time" content="2020-03-12 10:14:53 +0000" >
     <meta name="twitter:title" content="Try it: Getting started with Metal3.io | Metal³ - Metal Kubed">
     <meta name="twitter:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.">
 
@@ -329,11 +329,9 @@ successfully</p>
 <div class="premonition info"><div class="fa fa-info-circle"></div><div class="content"><p class="header">Note</p><p>you can also run some tests provisioning and deprovisioning machines by running:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="c"># for CAPI v1alpha1 based deployment</span>
+<span class="nv">$ </span>make test_v1a1
+<span class="c"># for CAPI v1alpha2, v1alpha3, v1alpha4 based deployment</span>
 <span class="nv">$ </span>make <span class="nb">test</span>
-<span class="c"># for CAPI v1alpha2 based deployment</span>
-<span class="nv">$ </span>make test_v1a2
-<span class="c"># for CAPI v1alpha3 based deployment</span>
-<span class="nv">$ </span>make test_v1a3
 </code></pre></div></div>
 
 
@@ -480,7 +478,7 @@ can configure the following</p>
     <tr>
       <td>CAPI_VERSION</td>
       <td>Version of Cluster API</td>
-      <td>“v1alpha1”, “v1alpha2”, “v1alpha3”</td>
+      <td>“v1alpha1”, “v1alpha2”, “v1alpha3”, “v1alpha4”</td>
       <td>“v1alpha3”</td>
     </tr>
     <tr>
