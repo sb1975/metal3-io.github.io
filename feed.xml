@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-03-13T07:47:36+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Cluster API provider renaming</title><link href="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html" rel="alternate" type="text/html" title="Cluster API provider renaming" /><published>2020-03-05T00:00:00+00:00</published><updated>2020-03-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/03/05/CAPI_provider_renaming</id><content type="html" xml:base="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html">&lt;h2 id=&quot;renaming-of-cluster-api-provider&quot;&gt;Renaming of Cluster API provider&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-03-13T16:08:04+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Cluster API provider renaming</title><link href="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html" rel="alternate" type="text/html" title="Cluster API provider renaming" /><published>2020-03-05T00:00:00+00:00</published><updated>2020-03-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/03/05/CAPI_provider_renaming</id><content type="html" xml:base="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html">&lt;h2 id=&quot;renaming-of-cluster-api-provider&quot;&gt;Renaming of Cluster API provider&lt;/h2&gt;
 
 &lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Backwards compatibility for v1alpha3&lt;/p&gt;&lt;p&gt;There is no backwards compatibility between v1alpha3 and v1alpha2 releases of
 the Cluster API provider for Metal3.&lt;/p&gt;
@@ -594,7 +594,7 @@ Interface  Type       Source     Model       MAC
 &lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;In the video below it is exhibited all the configuration explained and executed during this &lt;em&gt;first&lt;/em&gt; step.&lt;/p&gt;
 
-&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/lShd0RxDhFQ&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/VFbIHc3NbJo&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;step-2-configure-the-host&quot;&gt;&lt;strong&gt;Step 2: Configure the host&lt;/strong&gt;&lt;/h2&gt;
 
@@ -938,7 +938,7 @@ boot
 
 &lt;p&gt;In the video below it is exhibited all the configuration explained and executed during this &lt;em&gt;second&lt;/em&gt; step.&lt;/p&gt;
 
-&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/HfPxDqC2sH8&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/m8gTRZWEvc8&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;step-3-launch-the-management-cluster-minikube&quot;&gt;&lt;strong&gt;Step 3: Launch the management cluster (minikube)&lt;/strong&gt;&lt;/h2&gt;
 
@@ -1141,7 +1141,7 @@ deployment.apps/capi-controller-manager created
 &lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;In the video below it is exhibited all the configuration explained and executed during this &lt;em&gt;third&lt;/em&gt; step.&lt;/p&gt;
 
-&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/hDdzVyVHuQE&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/GaSmL7xrYNs&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;step-4-verification&quot;&gt;&lt;strong&gt;Step 4: Verification&lt;/strong&gt;&lt;/h2&gt;
 
@@ -1215,7 +1215,7 @@ metal3        metal3-baremetal-operator-78bffc8d-z5hqs    6/6     Running   0   
 
 &lt;p&gt;In the video below it is exhibited all the configuration explained and executed during the &lt;em&gt;verification&lt;/em&gt; steps.&lt;/p&gt;
 
-&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/wwakVkcXtwE&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;iframe width=&quot;1110&quot; height=&quot;625&quot; style=&quot;height: 625px&quot; src=&quot;https://www.youtube.com/embed/8LilwO-_WzU&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
 
 &lt;h2 id=&quot;summary&quot;&gt;&lt;strong&gt;Summary&lt;/strong&gt;&lt;/h2&gt;
 
