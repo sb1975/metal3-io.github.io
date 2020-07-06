@@ -9,22 +9,22 @@
     <link rel="shortcut icon" type="image/png" href="/favicon.png">
     <meta name="theme-color" content="#008585">
     
-    <title>Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019 | Metal³ - Metal Kubed</title>
+    <title>Raw image streaming available in Metal3 | Metal³ - Metal Kubed</title>
     <!-- # Opengraph protocol properties: https://ogp.me/ -->
-    <meta name="author" content="Pedro Ibáñez Requena" >
+    <meta name="author" content="Maël Kimmerlin" >
     <meta property="og:type" content="article" >
     <meta name="twitter:card" content="summary">
     <meta name="description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.">
-    <meta name="keywords" content="hybrid, cloud, metal3, baremetal, summit, edge" >
-    <meta property="og:title" content="Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019 | Metal³ - Metal Kubed">
+    <meta name="keywords" content="metal3, baremetal, raw image, image streaming" >
+    <meta property="og:title" content="Raw image streaming available in Metal3 | Metal³ - Metal Kubed">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://metal3.io/blog/2019/11/13/Extend_Your_Data_Center_to_the_Hybrid_Edge-Red_Hat_Summit.html" >
+    <meta property="og:url" content="https://metal3.io/blog/2020/07/05/raw-image-streaming.html" >
     <meta property="og:image" content="https://metal3.io/assets/images/metal3logo.png">
     <meta property="og:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes." >
     <meta property="og:site_name" content="Metal³ - Metal Kubed" >
-    <meta property="og:article:author" content="Pedro Ibáñez Requena" >
-    <meta property="og:article:published_time" content="2019-11-13 08:37:00 +0000" >
-    <meta name="twitter:title" content="Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019 | Metal³ - Metal Kubed">
+    <meta property="og:article:author" content="Maël Kimmerlin" >
+    <meta property="og:article:published_time" content="2020-07-05 00:00:00 +0000" >
+    <meta name="twitter:title" content="Raw image streaming available in Metal3 | Metal³ - Metal Kubed">
     <meta name="twitter:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.">
 
     <link type="application/atom+xml" rel="alternate" href="https://metal3.io/feed.xml" title="Metal³ - Metal Kubed" />
@@ -216,19 +216,11 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </section>
 <main class="mk-main mk-blog">
             <article class="mk-main__section mk-main__content mk-main__section__content">
-                    <h1 class="mk-heading--lg mk-heading mk-m-border mk-blog__post__title">Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019</h1>
-                    <time datetime="1999-12-23" class="mk-blog-meta__timestamp mk-blog-meta__item mk-blog-meta__timestamp--light">Wednesday, 13/11/2019</time>
-                    <div class="mk-blog-meta__item mk-blog-meta__author">By Pedro Ibáñez Requena</div>
+                    <h1 class="mk-heading--lg mk-heading mk-m-border mk-blog__post__title">Raw image streaming available in Metal3</h1>
+                    <time datetime="1999-12-23" class="mk-blog-meta__timestamp mk-blog-meta__item mk-blog-meta__timestamp--light">Sunday, 5/07/2020</time>
+                    <div class="mk-blog-meta__item mk-blog-meta__author">By Maël Kimmerlin</div>
                     <div class="mk-blog-meta__categories">
                                 
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#hybrid">
-                                  hybrid
-                                </a>
-                              
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#cloud">
-                                  cloud
-                                </a>
-                              
                                 <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#metal3">
                                   metal3
                                 </a>
@@ -237,19 +229,19 @@ autocomplete(document.getElementById("search-input"), mykeywords);
                                   baremetal
                                 </a>
                               
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#summit">
-                                  summit
+                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#raw-image">
+                                  raw-image
                                 </a>
                               
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#edge">
-                                  edge
+                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#image-streaming">
+                                  image-streaming
                                 </a>
                               
                 </div>
 
 <div class="mk-share-buttons">
 
-           <!-- <a class="mk-share-buttons__item" href="https://www.facebook.com/sharer/sharer.php?u=https://metal3.io/blog/2019/11/13/Extend_Your_Data_Center_to_the_Hybrid_Edge-Red_Hat_Summit.html"
+           <!-- <a class="mk-share-buttons__item" href="https://www.facebook.com/sharer/sharer.php?u=https://metal3.io/blog/2020/07/05/raw-image-streaming.html"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Facebook" >
             <?xml version="1.0" encoding="UTF-8"?>
@@ -259,7 +251,7 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </svg>Share on Facebook</a> -->
 
 
-        <a class="mk-share-buttons__item" href="https://twitter.com/intent/tweet?text=Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019&url=https://metal3.io/blog/2019/11/13/Extend_Your_Data_Center_to_the_Hybrid_Edge-Red_Hat_Summit.html"
+        <a class="mk-share-buttons__item" href="https://twitter.com/intent/tweet?text=Raw image streaming available in Metal3&url=https://metal3.io/blog/2020/07/05/raw-image-streaming.html"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
         title="Share on Twitter" >
         <?xml version="1.0" encoding="UTF-8"?>
@@ -268,43 +260,130 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </svg> Share on Twitter
     </a>
 </div>
-        <h2 id="conference-talk-extend-your-data-center-to-the-hybrid-edge---red-hat-summit-may-2019-paul-cormier-burr-stutter-and-garima-sharma">Conference talk: Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019, Paul Cormier, Burr Stutter and Garima Sharma</h2>
+        <p>Metal3 supports multiple types of images for deployment, the most
+popular being QCOW2. We have recently added support for a feature of Ironic
+that improves deployments on constrained environments, raw image streaming.
+We’ll first dive into how Ironic deploys the images on the target hosts, and
+how raw image streaming improves this process. Afterwards, we will point out
+the changes to take this into use in Metal3.</p>
 
-<p>A critical part of being successful in the hybrid cloud is being successful in your data center with your own infrastructure.</p>
+<h2 id="image-deployments-with-ironic">Image deployments with Ironic</h2>
 
-<p>In this video, Paul Cormier, Burr Sutter and Garima Sharma show how you can bring the Open Hybrid cloud to the edge. Cluster management from multiple cloud providers to on premise. In the demo you’ll see a multi-cluster inventory for the open hybrid cloud at cloud.redhat.com, OpenShift Container Storage providing storage for Virtual Machines and containers (Cloud, Virtualization and bare metal), and everything Kubernetes native.</p>
+<p>In Metal3, the image deployment is performed by the Ironic Python Agent (IPA)
+image running on the target host. In order to deploy an image, Ironic will
+first boot the target node with an IPA image over iPXE. IPA will run in memory.</p>
 
-<h2 id="speakers">Speakers</h2>
+<p>Once IPA runs on the target node, Ironic will instruct it to download the
+target image. In Metal3, we use HTTP(S) for the download of the image. IPA will
+download the image and, depending on the format of the image, prepare it to
+write it on the disk. This means that the image is downloaded in memory and
+decompressed, two steps that can be both time and memory consuming.</p>
 
-<p><a href="https://www.redhat.com/en/about/company/management/paul-cormier">Paul Cormier</a> Executive vice president and president, Products and Technologies. Leads Red Hat’s technology and products organizations, including engineering, product management, and product marketing for Red Hat’s technologies. He joined Red Hat in May 2001 as executive vice president, Engineering.</p>
+<p>In order to improve this process, Ironic implemented a feature called raw image
+streaming.</p>
 
-<p><a href="https://burrsutter.com/">Burr Sutter</a> A lifelong developer advocate, community organizer, and technology evangelist, Burr Sutter is a featured speaker at technology events around the globe —from Bangalore to Brussels and Berlin to Beijing (and most parts in between)— he is currently Director of Developer Experience at Red Hat. A Java Champion since 2005 and former president of the Atlanta Java User Group, Burr founded the DevNexus conference —now the second largest Java event in the U.S.— with the aim of making access to the world’s leading developers affordable to the developer community.</p>
+<h2 id="what-is-raw-image-streaming-">What is raw image streaming ?</h2>
 
-<p><a href="https://www.linkedin.com/in/garimasharma/">Garima Sharma</a> Senior Engineering leader at world’s largest Open Source company. As a seasoned Tech professional, she runs a global team of Solutions Engineers focused on a large portfolio of Cloud Computing products and technology. She has helped shape science and technology for mission critical software, reliability in operations and re-design of architecture all geared towards advancements in medicine, security, cloud technologies and bottom line savings for the client businesses. Whether leading the architecture, development and delivery of customer centric cutting edge systems, or spearheading diversity and inclusion initiatives via keynotes, blogs and conference presentations, Garima champions the idea of STEM. Garima ardently believes in Maya Angelou’s message that diversity makes for a rich tapestry, and we must understand that all the threads of the tapestry are equal in value no matter what their color.</p>
+<p>The target image format when writing to disk is raw. That’s why the images in
+formats like QCOW2 must be processed before being written to disk. However, if
+the image that is downloaded is already in raw format, then no processing is
+needed.</p>
 
-<h2 id="video">Video</h2>
+<p>Ironic leverages this, and instead of first downloading the image and then
+processing it before writing it to disk, it will directly write the
+downloading image to the disk. This feature is known as image streaming.
+Image streaming can only be performed with images in raw format.</p>
 
-<ul>
-  <li><a href="https://www.pscp.tv/RedHatOfficial/1vAGRWYPjngJl?t=1h27m51s">Extend Your Data Center to the Hybrid Edge - Red Hat Summit, May 2019</a></li>
-</ul>
+<p>Since the downloaded image when streamed is directly written to disk, the
+memory size requirements changes. For any other format than raw, the target
+host needs to have sufficient memory to both run IPA (4GB) and
+download the image in memory. However with raw images, the only constraint
+on memory is to run IPA (so 4GB). For example, in order to deploy an Ubuntu
+image (around 700MB, QCOW2), the requirement is 8GB when in QCOW2 format, while
+it is only 4GB (as for any other image) when streamed as raw. This allows to
+deploy images that are bigger than the available memory on constrained nodes.</p>
+
+<p>However, this shifts the load on the network, since the raw images are usually
+much bigger than other formats. Using this feature in network constrained
+environment is not recommended.</p>
+
+<h2 id="raw-image-streaming-in-metal3">Raw image streaming in Metal3</h2>
+
+<p>In order to use raw image streaming in Metal3, a couple of steps are needed.
+The first one is to convert the image to raw and make it available in an
+HTTP server. This can be achieved by running :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="syntax"><code>qemu-img convert <span class="nt">-O</span> raw <span class="s2">"</span><span class="k">${</span><span class="nv">IMAGE_NAME</span><span class="k">}</span><span class="s2">"</span> <span class="s2">"</span><span class="k">${</span><span class="nv">IMAGE_RAW_NAME</span><span class="k">}</span><span class="s2">"</span>
+</code></pre></div></div>
+
+<p>Once converted the image format needs to be provided to Ironic through the
+BareMetalHost (BMH) image spec field. If not provided, Ironic will assume that
+the format is unspecified and download it in memory first.</p>
+
+<p>The following is an example of the BMH image spec field in Metal3 Dev Env.</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">metal3.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">BareMetalHost</span>
+<span class="na">spec</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span>
+        <span class="na">format</span><span class="pi">:</span> <span class="s">raw</span>
+        <span class="na">url</span><span class="pi">:</span> <span class="s">http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img</span>
+        <span class="na">checksum</span><span class="pi">:</span> <span class="s">http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img.md5sum</span>
+        <span class="na">checksumType</span><span class="pi">:</span> <span class="s">md5</span>
+</code></pre></div></div>
+
+<p>If deploying with Cluster API provider Metal3 (CAPM3), CAPM3 takes care of
+setting the image field of BMH properly, based on the image field values in
+the Metal3Machine (M3M), that might be based on a Metal3MachineTemplate (M3MT).
+So in order to use raw image streaming, the format of the image must be
+provided in the image spec field of the Metal3Machine or Metal3MachineTemplate.</p>
+
+<p>The following is an example of the M3M image spec field in metal3-dev-env :</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">infrastructure.cluster.x-k8s.io/v1alpha3</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Metal3Machine</span>
+<span class="na">spec</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span>
+        <span class="na">format</span><span class="pi">:</span> <span class="s">raw</span>
+        <span class="na">url</span><span class="pi">:</span> <span class="s">http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img</span>
+        <span class="na">checksum</span><span class="pi">:</span> <span class="s">http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img.md5sum</span>
+        <span class="na">checksumType</span><span class="pi">:</span> <span class="s">md5</span>
+</code></pre></div></div>
+
+<p>The following is for a M3MT in metal3-dev-env :</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">infrastructure.cluster.x-k8s.io/v1alpha3</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Metal3MachineTemplate</span>
+<span class="na">spec</span><span class="pi">:</span>
+    <span class="na">template</span><span class="pi">:</span>
+        <span class="na">spec</span><span class="pi">:</span>
+            <span class="na">image</span><span class="pi">:</span>
+                <span class="na">format</span><span class="pi">:</span> <span class="s">raw</span>
+                <span class="na">url</span><span class="pi">:</span> <span class="s">http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img</span>
+                <span class="na">checksum</span><span class="pi">:</span> <span class="s">http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img.md5sum</span>
+                <span class="na">checksumType</span><span class="pi">:</span> <span class="s">md5</span>
+</code></pre></div></div>
+
+<p>This will enable raw image streaming. By default, metal3-dev-env uses raw image
+streaming, in order to minimize the resource requirements of the environment.</p>
+
+<h2 id="in-a-nutshell">In a nutshell</h2>
+
+<p>With the addition of raw image streaming, Metal3 now supports a wider range of
+hardware, specifically the memory constrained nodes and speeds up deployments.
+Metal3 still supports all the other formats it supported until now. This new
+feature changes the way raw images are deployed for better efficiency.</p>
 
 </article>
 <nav class="mk-pagination">
         
-          <a class="mk-pagination__page mk-pagination__page--prev" href="/blog/2019/11/07/Kubernetes-native_Infrastructure-Managed_Baremetal_with_Kubernetes_Operators_and_OpenStack_Ironic.html" aria-label="previous page">
+          <a class="mk-pagination__page mk-pagination__page--prev" href="/blog/2020/03/05/CAPI_provider_renaming.html" aria-label="previous page">
                 <?xml version="1.0" encoding="UTF-8"?>
                 <svg enable-background="new 0 0 398.7 320.1" version="1.1" viewBox="0 0 398.7 320.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
                 <path d="m199 143.1l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-96.3 96.5 96.4 96.4c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.3-9.5-24.6-0.1-33.9zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-96.3-96.5 96.4-96.4c9.4-9.4 9.4-24.6 0-33.9l-22.6-22.7c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.3-9.5 24.6-0.1 34z"/>
                 </svg>
           </a>
         
-        
-          <a class="mk-pagination__page mk-pagination__page--next" href="/blog/2019/12/04/Introducing_metal3_kubernetes_native_bare_metal_host_management.html" aria-label="next page">
-                <?xml version="1.0" encoding="UTF-8"?>
-                <svg enable-background="new 0 0 398.6 320.1" version="1.1" viewBox="0 0 398.6 320.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-                <path d="m199.6 177.1l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.7c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.5-96.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.8c9.4-9.4 24.6-9.4 33.9 0l136 136c9.4 9.3 9.4 24.6 0.1 34zm191.9-34l-136-136c-9.4-9.4-24.6-9.4-33.9 0l-22.6 22.5c-9.4 9.4-9.4 24.6 0 33.9l96.4 96.4-96.4 96.4c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l136-136c9.4-9.2 9.4-24.4 0-33.7z"/>
-                </svg>
-          </a>
         
 </nav>
 
@@ -321,10 +400,6 @@ autocomplete(document.getElementById("search-input"), mykeywords);
             
             
             
-            
-              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/07/05/raw-image-streaming.html">Raw image streaming available in Metal3</a></li>
-              
-              
             
           
             
@@ -350,6 +425,15 @@ autocomplete(document.getElementById("search-input"), mykeywords);
             
             
               <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/02/18/metal3-dev-env-install-deep-dive.html">A detailed walkthrough of the Metal³ development environment</a></li>
+              
+              
+            
+          
+            
+            
+            
+            
+              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/01/20/metal3_deploy_kubernetes_on_bare_metal.html">Metal³: Deploy Kubernetes on Bare Metal - Yolanda Robla - Shift Dev 2019</a></li>
               
               
                 

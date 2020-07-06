@@ -1,4 +1,116 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-06T14:13:24+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Cluster API provider renaming</title><link href="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html" rel="alternate" type="text/html" title="Cluster API provider renaming" /><published>2020-03-05T00:00:00+00:00</published><updated>2020-03-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/03/05/CAPI_provider_renaming</id><content type="html" xml:base="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html">&lt;h2 id=&quot;renaming-of-cluster-api-provider&quot;&gt;Renaming of Cluster API provider&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-06T17:40:10+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Raw image streaming available in Metal3</title><link href="https://metal3.io/blog/2020/07/05/raw-image-streaming.html" rel="alternate" type="text/html" title="Raw image streaming available in Metal3" /><published>2020-07-05T00:00:00+00:00</published><updated>2020-07-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/05/raw-image-streaming</id><content type="html" xml:base="https://metal3.io/blog/2020/07/05/raw-image-streaming.html">&lt;p&gt;Metal3 supports multiple types of images for deployment, the most
+popular being QCOW2. We have recently added support for a feature of Ironic
+that improves deployments on constrained environments, raw image streaming.
+We’ll first dive into how Ironic deploys the images on the target hosts, and
+how raw image streaming improves this process. Afterwards, we will point out
+the changes to take this into use in Metal3.&lt;/p&gt;
+
+&lt;h2 id=&quot;image-deployments-with-ironic&quot;&gt;Image deployments with Ironic&lt;/h2&gt;
+
+&lt;p&gt;In Metal3, the image deployment is performed by the Ironic Python Agent (IPA)
+image running on the target host. In order to deploy an image, Ironic will
+first boot the target node with an IPA image over iPXE. IPA will run in memory.&lt;/p&gt;
+
+&lt;p&gt;Once IPA runs on the target node, Ironic will instruct it to download the
+target image. In Metal3, we use HTTP(S) for the download of the image. IPA will
+download the image and, depending on the format of the image, prepare it to
+write it on the disk. This means that the image is downloaded in memory and
+decompressed, two steps that can be both time and memory consuming.&lt;/p&gt;
+
+&lt;p&gt;In order to improve this process, Ironic implemented a feature called raw image
+streaming.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-raw-image-streaming-&quot;&gt;What is raw image streaming ?&lt;/h2&gt;
+
+&lt;p&gt;The target image format when writing to disk is raw. That’s why the images in
+formats like QCOW2 must be processed before being written to disk. However, if
+the image that is downloaded is already in raw format, then no processing is
+needed.&lt;/p&gt;
+
+&lt;p&gt;Ironic leverages this, and instead of first downloading the image and then
+processing it before writing it to disk, it will directly write the
+downloading image to the disk. This feature is known as image streaming.
+Image streaming can only be performed with images in raw format.&lt;/p&gt;
+
+&lt;p&gt;Since the downloaded image when streamed is directly written to disk, the
+memory size requirements changes. For any other format than raw, the target
+host needs to have sufficient memory to both run IPA (4GB) and
+download the image in memory. However with raw images, the only constraint
+on memory is to run IPA (so 4GB). For example, in order to deploy an Ubuntu
+image (around 700MB, QCOW2), the requirement is 8GB when in QCOW2 format, while
+it is only 4GB (as for any other image) when streamed as raw. This allows to
+deploy images that are bigger than the available memory on constrained nodes.&lt;/p&gt;
+
+&lt;p&gt;However, this shifts the load on the network, since the raw images are usually
+much bigger than other formats. Using this feature in network constrained
+environment is not recommended.&lt;/p&gt;
+
+&lt;h2 id=&quot;raw-image-streaming-in-metal3&quot;&gt;Raw image streaming in Metal3&lt;/h2&gt;
+
+&lt;p&gt;In order to use raw image streaming in Metal3, a couple of steps are needed.
+The first one is to convert the image to raw and make it available in an
+HTTP server. This can be achieved by running :&lt;/p&gt;
+
+&lt;div class=&quot;language-bash highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;qemu-img convert &lt;span class=&quot;nt&quot;&gt;-O&lt;/span&gt; raw &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;IMAGE_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;IMAGE_RAW_NAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Once converted the image format needs to be provided to Ironic through the
+BareMetalHost (BMH) image spec field. If not provided, Ironic will assume that
+the format is unspecified and download it in memory first.&lt;/p&gt;
+
+&lt;p&gt;The following is an example of the BMH image spec field in Metal3 Dev Env.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3.io/v1alpha1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;BareMetalHost&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;raw&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;checksum&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img.md5sum&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;checksumType&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;md5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If deploying with Cluster API provider Metal3 (CAPM3), CAPM3 takes care of
+setting the image field of BMH properly, based on the image field values in
+the Metal3Machine (M3M), that might be based on a Metal3MachineTemplate (M3MT).
+So in order to use raw image streaming, the format of the image must be
+provided in the image spec field of the Metal3Machine or Metal3MachineTemplate.&lt;/p&gt;
+
+&lt;p&gt;The following is an example of the M3M image spec field in metal3-dev-env :&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;infrastructure.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metal3Machine&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;raw&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;checksum&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img.md5sum&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;checksumType&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;md5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The following is for a M3MT in metal3-dev-env :&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;infrastructure.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metal3MachineTemplate&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;raw&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;checksum&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.1/images/bionic-server-cloudimg-amd64-raw.img.md5sum&lt;/span&gt;
+                &lt;span class=&quot;na&quot;&gt;checksumType&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;md5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This will enable raw image streaming. By default, metal3-dev-env uses raw image
+streaming, in order to minimize the resource requirements of the environment.&lt;/p&gt;
+
+&lt;h2 id=&quot;in-a-nutshell&quot;&gt;In a nutshell&lt;/h2&gt;
+
+&lt;p&gt;With the addition of raw image streaming, Metal3 now supports a wider range of
+hardware, specifically the memory constrained nodes and speeds up deployments.
+Metal3 still supports all the other formats it supported until now. This new
+feature changes the way raw images are deployed for better efficiency.&lt;/p&gt;</content><author><name>Maël Kimmerlin</name></author><summary type="html">Metal3 supports multiple types of images for deployment, the most popular being QCOW2. We have recently added support for a feature of Ironic that improves deployments on constrained environments, raw image streaming. We’ll first dive into how Ironic deploys the images on the target hosts, and how raw image streaming improves this process. Afterwards, we will point out the changes to take this into use in Metal3.</summary></entry><entry><title type="html">Cluster API provider renaming</title><link href="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html" rel="alternate" type="text/html" title="Cluster API provider renaming" /><published>2020-03-05T00:00:00+00:00</published><updated>2020-03-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/03/05/CAPI_provider_renaming</id><content type="html" xml:base="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html">&lt;h2 id=&quot;renaming-of-cluster-api-provider&quot;&gt;Renaming of Cluster API provider&lt;/h2&gt;
 
 &lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Backwards compatibility for v1alpha3&lt;/p&gt;&lt;p&gt;There is no backwards compatibility between v1alpha3 and v1alpha2 releases of
 the Cluster API provider for Metal3.&lt;/p&gt;
@@ -1520,309 +1632,4 @@ metal3-node01   OK       provisioned                       ipmi://172.22.0.1:623
       &lt;p&gt;Ironic was chosen as the initial provider for baremetal provisioning, check &lt;a href=&quot;https://github.com/metal3-io/metal3-docs/blob/master/design/use-ironic.md&quot;&gt;Ironic documentation&lt;/a&gt; for more details about Ironic usage in Metal³ &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
-&lt;/div&gt;</content><author><name>Pablo Iranzo Gómez</name></author><summary type="html">Introduction</summary></entry><entry><title type="html">Metal3</title><link href="https://metal3.io/blog/2019/06/25/Metal3.html" rel="alternate" type="text/html" title="Metal3" /><published>2019-06-25T15:19:14+00:00</published><updated>2019-06-25T15:19:14+00:00</updated><id>https://metal3.io/blog/2019/06/25/Metal3</id><content type="html" xml:base="https://metal3.io/blog/2019/06/25/Metal3.html">&lt;p&gt;Originally posted at &lt;a href=&quot;https://www.underkube.com/posts/metal3/&quot;&gt;https://www.underkube.com/posts/metal3/&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;In this blog post, I’m going to try to explain in my own words a high level
-overview of what &lt;a href=&quot;https://metal3.io&quot;&gt;Metal3&lt;/a&gt; is, the motivation behind it and some concepts related
-to a ‘baremetal operator’.&lt;/p&gt;
-
-&lt;p&gt;Let’s have some definitions!&lt;/p&gt;
-
-&lt;h2 id=&quot;custom-resource-definition&quot;&gt;Custom Resource Definition&lt;/h2&gt;
-
-&lt;p&gt;The k8s API provides some out-of-the-box objects such as pods, services, etc.
-There are a few methods of &lt;a href=&quot;https://kubernetes.io/docs/concepts/extend-kubernetes/&quot;&gt;extending the k8s API&lt;/a&gt; (such as API extensions)
-but since a few releases back, the k8s API can be extended easily with &lt;a href=&quot;https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/&quot;&gt;custom resources definitions&lt;/a&gt; (CRDs).
-Basically this means you can virtually create any type of object &lt;strong&gt;definition&lt;/strong&gt; in k8s
-(actually only user with cluster-admin capabilities) with a yaml such as:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;apiextensions.k8s.io/v1beta1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;CustomResourceDefinition&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;c1&quot;&gt;# name must match the spec fields below, and be in the form: &amp;lt;plural&amp;gt;.&amp;lt;group&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;crontabs.stable.example.com&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;c1&quot;&gt;# group name to use for REST API: /apis/&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;stable.example.com&lt;/span&gt;
-  &lt;span class=&quot;c1&quot;&gt;# list of versions supported by this CustomResourceDefinition&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;versions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
-      &lt;span class=&quot;c1&quot;&gt;# Each version can be enabled/disabled by Served flag.&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;served&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
-      &lt;span class=&quot;c1&quot;&gt;# One and only one version must be marked as the storage version.&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;storage&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
-  &lt;span class=&quot;c1&quot;&gt;# either Namespaced or Cluster&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Namespaced&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;names&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;# plural name to be used in the URL: /apis/&amp;lt;group&amp;gt;/&amp;lt;version&amp;gt;/&amp;lt;plural&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;plural&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;crontabs&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;# singular name to be used as an alias on the CLI and for display&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;singular&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;crontab&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;# kind is normally the CamelCased singular type. Your resource manifests use this.&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;CronTab&lt;/span&gt;
-    &lt;span class=&quot;c1&quot;&gt;# shortNames allow shorter string to match your resource on the CLI&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;shortNames&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ct&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;preserveUnknownFields&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;validation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;openAPIV3Schema&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;object&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;properties&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-          &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;object&lt;/span&gt;
-          &lt;span class=&quot;na&quot;&gt;properties&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-            &lt;span class=&quot;na&quot;&gt;cronSpec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-              &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;string&lt;/span&gt;
-            &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-              &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;string&lt;/span&gt;
-            &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-              &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;integer&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And after &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;kubectl apply -f&lt;/code&gt; you can &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;kubectl get crontabs&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;There are tons of information with regards to CRDs, like the &lt;a href=&quot;https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/&quot;&gt;k8s official documentation&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;The CRD by himself is not useful &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;per se&lt;/code&gt; as nobody will take care of it (that’s why I said &lt;strong&gt;definition&lt;/strong&gt;). It
-requires a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;controller&lt;/code&gt; to watch for those new objects and react to different
-events affecting the object.&lt;/p&gt;
-
-&lt;h2 id=&quot;controller&quot;&gt;Controller&lt;/h2&gt;
-
-&lt;p&gt;A controller is basically a loop that watches the current status of an object
-and if it is different from the desired status, it fix it (reconciliation).
-This is why k8s is ‘declarative’, you specify the object desired status instead
-‘how to do it’ (imperative).&lt;/p&gt;
-
-&lt;p&gt;Again, there are tons of documentation (and &lt;a href=&quot;https://github.com/kubernetes/sample-controller&quot;&gt;examples&lt;/a&gt;) around the &lt;a href=&quot;https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html&quot;&gt;controller&lt;/a&gt; pattern which is
-basically the k8s roots, so I’ll let your google-foo take care of it :)&lt;/p&gt;
-
-&lt;h2 id=&quot;operator&quot;&gt;Operator&lt;/h2&gt;
-
-&lt;p&gt;An Operator (in k8s slang) is an application running in your k8s
-cluster that deploys, manages and maintain (so, operates) a k8s application.&lt;/p&gt;
-
-&lt;p&gt;This k8s application (the one that the operator manages), can be as simple as a ‘hello world’ application
-containerized and deployed in your k8s cluster or it can be a much more complex
-thing, such a database cluster.&lt;/p&gt;
-
-&lt;p&gt;The ‘operator’ is like an ‘expert sysadmin’ containerized that takes care of
-your application.&lt;/p&gt;
-
-&lt;p&gt;Bear in mind that the ‘expert’ tag (meaning the automation behind the operator)
-depends on the operator implementation… so there can be basic operators that
-only deploy your application or complex operators that handle day 2 operations
-such as upgrades, fail overs, backup/restore, etc.&lt;/p&gt;
-
-&lt;p&gt;See the &lt;a href=&quot;https://coreos.com/operators/&quot;&gt;CoreOS operator definition&lt;/a&gt; for more information.&lt;/p&gt;
-
-&lt;h2 id=&quot;cloud-controller-manager&quot;&gt;Cloud Controller Manager&lt;/h2&gt;
-
-&lt;p&gt;k8s code is smart enough to be able to leverage
-the underlying infrastructure where the cluster is running, such as being able
-of creating ‘LoadBalancer’ services, understanding the cluster topology based on the cloud provider AZs where the nodes are running (for scheduling reasons), etc.&lt;/p&gt;
-
-&lt;p&gt;This task of ‘talking to the cloud provider’ is performed by the Cloud Controller Manager (CCM) and for more
-information you can take a look at the official k8s documentation with
-regards the &lt;a href=&quot;https://kubernetes.io/docs/concepts/architecture/cloud-controller/&quot;&gt;architecture&lt;/a&gt; and the &lt;a href=&quot;https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/#cloud-controller-manager&quot;&gt;administration&lt;/a&gt; (also, if you are brave enough, you can create your own &lt;a href=&quot;https://kubernetes.io/docs/tasks/administer-cluster/developing-cloud-controller-manager/&quot;&gt;cloud controller manager&lt;/a&gt; )&lt;/p&gt;
-
-&lt;h2 id=&quot;cluster-api&quot;&gt;Cluster API&lt;/h2&gt;
-
-&lt;p&gt;The Cluster API implementation is a WIP ‘framework’ that allows a k8s cluster to manage itself, including the ability of creating new clusters, adding more nodes, etc. in a ‘k8s way’ (declarative, controllers, CRDs, etc.), so there are objects such as &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Cluster&lt;/code&gt; that can be expressed as k8s objects:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;cluster.k8s.io/v1alpha1&quot;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Cluster&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mycluster&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;clusterNetwork&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;cidrBlocks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;10.96.0.0/12&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;pods&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;cidrBlocks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;192.168.0.0/16&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;serviceDomain&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;cluster.local&quot;&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;providerSpec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;but also:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api/blob/60933cb23498d0621f57454c208fc3a8d6e18bf2/api/v1alpha2/machine_types.go&quot;&gt;Machine type objects&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;[MachineSet type objects]&lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api/blob/60933cb23498d0621f57454c208fc3a8d6e18bf2/api/v1alpha2/machineset_types.go&quot;&gt;(https://github.com/kubernetes-sigs/cluster-api/blob/master/pkg/apis/cluster/v1alpha1/machineset_types.go&lt;/a&gt;)&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api/blob/60933cb23498d0621f57454c208fc3a8d6e18bf2/api/v1alpha2/machinedeployment_types.go&quot;&gt;MachineDeployment type objects&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api/tree/60933cb23498d0621f57454c208fc3a8d6e18bf2/api/v1alpha2&quot;&gt;etc&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;There are some
-provider implementations in the wild such as the AWS, Azure, GCP, OpenStack,
-vSphere, etc. ones and the Cluster API project is driven by the &lt;a href=&quot;https://github.com/kubernetes/community/tree/master/sig-cluster-lifecycle&quot;&gt;SIG Cluster Lifecycle&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Please review the official &lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api&quot;&gt;Cluster API&lt;/a&gt; repository for more information.&lt;/p&gt;
-
-&lt;h3 id=&quot;actuator&quot;&gt;Actuator&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;actuator&lt;/code&gt; is a Cluster API interface that reacts to changes to &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt;
-objects reconciliating the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; status.&lt;/p&gt;
-
-&lt;p&gt;The actuator code is tightly coupled with the provider (that’s why it is an
-interface) such as the &lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api-provider-aws/blob/25376aa086f183a13f1d50cbb23dd250c03d3137/pkg/cloud/actuators/cluster/actuator.go&quot;&gt;AWS one&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;machineset-vs-machine&quot;&gt;MachineSet vs Machine&lt;/h2&gt;
-
-&lt;p&gt;To simplify, let’s say that &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineSets&lt;/code&gt; are to &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machines&lt;/code&gt; what &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;ReplicaSets&lt;/code&gt; are
-to &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Pods&lt;/code&gt;. So you can scale the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machines&lt;/code&gt; in your cluster just by changing
-the number of replicas of a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineSet&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;cluster-api-vs-cloud-providers&quot;&gt;Cluster API vs Cloud Providers&lt;/h2&gt;
-
-&lt;p&gt;As we have seen, the Cluster API leverages the provider related to the k8s
-infrastructure itself (clusters and nodes) and the CCM and the cloud provider
-integration for k8s is to leverage the cloud provider to provide support infrastructure.&lt;/p&gt;
-
-&lt;p&gt;Let’s say Cluster API is for the k8s administrators and the
-CCM is for the k8s users :)&lt;/p&gt;
-
-&lt;h2 id=&quot;machine-api&quot;&gt;Machine API&lt;/h2&gt;
-
-&lt;p&gt;The OpenShift 4 Machine API is a combination of some of the upstream Cluster API
-with custom OpenShift resources and it is designed to work in conjunction with
-the &lt;a href=&quot;https://github.com/openshift/cluster-version-operator&quot;&gt;Cluster Version Operator&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;openshifts-machine-api-operator&quot;&gt;OpenShift’s Machine API Operator&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://github.com/openshift/machine-api-operator&quot;&gt;machine-api-operator&lt;/a&gt; is
-an operator that manages the Machine API objects in an OpenShift 4 cluster.&lt;/p&gt;
-
-&lt;p&gt;The operator is capable of creating machines in AWS and libvirt (more providers
-coming soon) via the &lt;a href=&quot;https://github.com/openshift/cluster-api/tree/master/pkg/controller/machine&quot;&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine Controller&lt;/code&gt;&lt;/a&gt; and it is included out of the
-box with OCP 4 (and &lt;a href=&quot;https://github.com/openshift/machine-api-operator#dev&quot;&gt;can be deployed in a k8s vanilla as well&lt;/a&gt;)&lt;/p&gt;
-
-&lt;h2 id=&quot;baremetal&quot;&gt;Baremetal&lt;/h2&gt;
-
-&lt;p&gt;A baremetal server (or bare-metal) is just a computer server.&lt;/p&gt;
-
-&lt;p&gt;The last years terms such as virtualization, containers, serverless, etc. have been
-popular but at the end of the day, all the code running on top of a SaaS, PaaS
-or IaaS is actually running in a real physical server stored in a datacenter
-wired to routers, switches and power. That server is a ‘baremetal’ server.&lt;/p&gt;
-
-&lt;p&gt;If you are used to cloud providers and instances, you probably don’t know the
-pains of baremetal management… including things such as connecting to the
-virtual console (usually it requires an old Java version) to debug issues,
-configuring pxe for provisioning baremetal hosts (or attach ISOs via the virtual console… or insert a CD/DVD physically into the CD carry if you are
-‘lucky’ enough…), configuring VLANs for traffic isolation, etc.&lt;/p&gt;
-
-&lt;p&gt;That kind of operations is not ‘cloud’ ready and there are tools that provide
-baremetal management, such as &lt;a href=&quot;https://maas.io/&quot;&gt;maas&lt;/a&gt; or &lt;a href=&quot;https://wiki.openstack.org/wiki/Ironic&quot;&gt;ironic&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&quot;ironic&quot;&gt;Ironic&lt;/h2&gt;
-
-&lt;p&gt;OpenStack bare metal provisioning (or ironic) is an open source project (or even better, a number of open source projects) to manage baremetal hosts. Ironic avoids the administrator to deal with pxe configuration, manual deployments, etc. and provides a defined API and a series of plugins to interact with different baremetal models and vendors.&lt;/p&gt;
-
-&lt;p&gt;Ironic is used in OpenStack to provide &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;baremetal&lt;/code&gt; objects but there are some
-projects (such as &lt;a href=&quot;https://docs.openstack.org/bifrost/latest/&quot;&gt;bifrost&lt;/a&gt;) to use
-Ironic ‘standalone’ (so, no OpenStack required)&lt;/p&gt;
-
-&lt;h2 id=&quot;metal3&quot;&gt;Metal3&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://metal3.io&quot;&gt;Metal3&lt;/a&gt; is a project aimed at providing a baremetal operator that
-implements the Cluster API framework required to be able to manage baremetal
-in a k8s way (easy peasy!). It uses &lt;a href=&quot;https://github.com/metal3-io/metal3-docs/blob/master/design/use-ironic.md&quot;&gt;ironic under the hood&lt;/a&gt; to avoid reinventing the
-wheel, but consider it as an implementation detail that may change.&lt;/p&gt;
-
-&lt;p&gt;The Metal3 baremetal operator watches for &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; (CRD) objects defined as:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3.io/v1alpha1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;BareMetalHost&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;my-worker-0&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;online&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;bootMACAddress&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;00:11:22:33:44:55&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;bmc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipmi://my-worker-0.ipmi.example.com&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;credentialsName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;my-worker-0-bmc-secret&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;There are a few more fields in the &lt;a href=&quot;https://github.com/metal3-io/baremetal-operator/blob/master/pkg/apis/metal3/v1alpha1/baremetalhost_types.go&quot;&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; object&lt;/a&gt; such as the image, hardware profile, etc.&lt;/p&gt;
-
-&lt;p&gt;The Metal3 project is actually divided into two different components:&lt;/p&gt;
-
-&lt;h3 id=&quot;baremetal-operator&quot;&gt;baremetal-operator&lt;/h3&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://github.com/metal3-io/baremetal-operator&quot;&gt;Metal3 baremetal-operator&lt;/a&gt; is the component that manages baremetal hosts. It exposes a new &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; custom resource in the k8s API that lets you manage hosts in a declarative way.&lt;/p&gt;
-
-&lt;h3 id=&quot;cluster-api-provider-baremetal&quot;&gt;cluster-api-provider-baremetal&lt;/h3&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://github.com/metal3-io/cluster-api-provider-baremetal&quot;&gt;Metal3 cluster-api-provider-baremetal&lt;/a&gt; includes the integration with the Cluster API project. This provider currently includes a Machine actuator that acts as a client of the BareMetalHost custom resources.&lt;/p&gt;
-
-&lt;h2 id=&quot;baremetalhost-vs-machine-vs-node&quot;&gt;BareMetalHost vs Machine vs Node&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; is a Metal3 object&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; is a Cluster API object&lt;/li&gt;
-  &lt;li&gt;Node is where the pods run :)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Those three concepts are linked in a 1:1:1 relationship meaning:&lt;/p&gt;
-
-&lt;p&gt;A &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; created with Metal3 maps to a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; object and once the
-installation procedure finishes, a new kubernetes node will be added to the
-cluster.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get nodes
-NAME                                         STATUS   ROLES    AGE   VERSION
-my-node-0.example.com                        Ready    master   25h   v1.14.0
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get machines &lt;span class=&quot;nt&quot;&gt;--all-namespaces&lt;/span&gt;
-NAMESPACE               NAME                  INSTANCE   STATE   TYPE   REGION   ZONE   AGE
-openshift-machine-api   my-node-0                                                   25h
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get baremetalhosts &lt;span class=&quot;nt&quot;&gt;--allnamespaces&lt;/span&gt;
-NAMESPACE             NAME      STATUS PROVISIONING STATUS MACHINE BMC HARDWARE PROFILE ONLINE ERROR
-openshift-machine-api my-node-0 OK     provisioned  my-node-0.example.com ipmi://1.2.3.4 unknown &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The 1:1 relationship for the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; and the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; is stored in the
-&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;machineRef&lt;/code&gt; field in the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHost&lt;/code&gt; object:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl  get baremetalhost/my-node-0 &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; openshift-machine-api &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;jsonpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'{.spec.machineRef}'&lt;/span&gt;
-
-map[name:my-node-0 namespace:openshift-machine-api]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; annotation:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get machines my-node-0 &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; openshift-machine-api &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;jsonpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'{.metadata.annotations}'&lt;/span&gt;
-map[metal3.io/BareMetalHost:openshift-machine-api/my-node-0]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;The 1:1 relationship for the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; and the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Node&lt;/code&gt; currently requires to
-execute the &lt;a href=&quot;https://github.com/openshift-metal3/dev-scripts/blob/master/link-machine-and-node.sh&quot;&gt;link-machine-and-node.sh&lt;/a&gt; script to modify the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt;
-object &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;.status&lt;/code&gt; field:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;./link-machine-and-node.sh MACHINE NODE
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Then, the reference is stored in the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;.status.nodeRef.name&lt;/code&gt; field in the
-&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; object:&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;kubectl get machine my-node-0 &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;jsonpath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'{.status.nodeRef.name}'&lt;/span&gt;
-
-my-node-0.example.com
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;recap&quot;&gt;Recap&lt;/h2&gt;
-
-&lt;p&gt;Being able to ‘just scale a node’ in k8s means a lot of underlying concepts and technologies involved behind the scenes :)&lt;/p&gt;
-
-&lt;h2 id=&quot;resourceslinks&quot;&gt;Resources/links&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://dzone.com/articles/introducing-the-kubernetes-cluster-api-project-2&quot;&gt;https://dzone.com/articles/introducing-the-kubernetes-cluster-api-project-2&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://blogs.vmware.com/cloudnative/2019/03/14/what-and-why-of-cluster-api/&quot;&gt;https://blogs.vmware.com/cloudnative/2019/03/14/what-and-why-of-cluster-api/&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api&quot;&gt;https://github.com/kubernetes-sigs/cluster-api&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes-sigs/cluster-api-provider-aws&quot;&gt;https://github.com/kubernetes-sigs/cluster-api-provider-aws&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://itnext.io/deep-dive-to-cluster-api-a0b4e792d57d&quot;&gt;https://itnext.io/deep-dive-to-cluster-api-a0b4e792d57d&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.linux.com/blog/event/kubecon/2018/4/extending-kubernetes-cluster-api&quot;&gt;https://www.linux.com/blog/event/kubecon/2018/4/extending-kubernetes-cluster-api&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Eduardo Minguez</name></author><summary type="html">Originally posted at https://www.underkube.com/posts/metal3/</summary></entry></feed>
+&lt;/div&gt;</content><author><name>Pablo Iranzo Gómez</name></author><summary type="html">Introduction</summary></entry></feed>
