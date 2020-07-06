@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-06T17:40:10+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Raw image streaming available in Metal3</title><link href="https://metal3.io/blog/2020/07/05/raw-image-streaming.html" rel="alternate" type="text/html" title="Raw image streaming available in Metal3" /><published>2020-07-05T00:00:00+00:00</published><updated>2020-07-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/05/raw-image-streaming</id><content type="html" xml:base="https://metal3.io/blog/2020/07/05/raw-image-streaming.html">&lt;p&gt;Metal3 supports multiple types of images for deployment, the most
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-06T17:58:08+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Raw image streaming available in Metal3</title><link href="https://metal3.io/blog/2020/07/05/raw-image-streaming.html" rel="alternate" type="text/html" title="Raw image streaming available in Metal3" /><published>2020-07-05T00:00:00+00:00</published><updated>2020-07-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/05/raw-image-streaming</id><content type="html" xml:base="https://metal3.io/blog/2020/07/05/raw-image-streaming.html">&lt;p&gt;Metal3 supports multiple types of images for deployment, the most
 popular being QCOW2. We have recently added support for a feature of Ironic
 that improves deployments on constrained environments, raw image streaming.
 We’ll first dive into how Ironic deploys the images on the target hosts, and
@@ -110,7 +110,486 @@ streaming, in order to minimize the resource requirements of the environment.&lt
 &lt;p&gt;With the addition of raw image streaming, Metal3 now supports a wider range of
 hardware, specifically the memory constrained nodes and speeds up deployments.
 Metal3 still supports all the other formats it supported until now. This new
-feature changes the way raw images are deployed for better efficiency.&lt;/p&gt;</content><author><name>Maël Kimmerlin</name></author><summary type="html">Metal3 supports multiple types of images for deployment, the most popular being QCOW2. We have recently added support for a feature of Ironic that improves deployments on constrained environments, raw image streaming. We’ll first dive into how Ironic deploys the images on the target hosts, and how raw image streaming improves this process. Afterwards, we will point out the changes to take this into use in Metal3.</summary></entry><entry><title type="html">Cluster API provider renaming</title><link href="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html" rel="alternate" type="text/html" title="Cluster API provider renaming" /><published>2020-03-05T00:00:00+00:00</published><updated>2020-03-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/03/05/CAPI_provider_renaming</id><content type="html" xml:base="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html">&lt;h2 id=&quot;renaming-of-cluster-api-provider&quot;&gt;Renaming of Cluster API provider&lt;/h2&gt;
+feature changes the way raw images are deployed for better efficiency.&lt;/p&gt;</content><author><name>Maël Kimmerlin</name></author><summary type="html">Metal3 supports multiple types of images for deployment, the most popular being QCOW2. We have recently added support for a feature of Ironic that improves deployments on constrained environments, raw image streaming. We’ll first dive into how Ironic deploys the images on the target hosts, and how raw image streaming improves this process. Afterwards, we will point out the changes to take this into use in Metal3.</summary></entry><entry><title type="html">Metal³ development environment walkthrough part 2: Deploying a new bare metal cluster</title><link href="https://metal3.io/blog/2020/06/18/Metal3-dev-env-BareMetal-Cluster-Deployment.html" rel="alternate" type="text/html" title="Metal³ development environment walkthrough part 2: Deploying a new bare metal cluster" /><published>2020-06-18T00:00:00+00:00</published><updated>2020-06-18T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/06/18/Metal3-dev-env-BareMetal-Cluster-Deployment</id><content type="html" xml:base="https://metal3.io/blog/2020/06/18/Metal3-dev-env-BareMetal-Cluster-Deployment.html">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
+
+&lt;p&gt;This blog post describes how to deploy a bare metal cluster, a virtual one for simplicity, using &lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env&quot;&gt;Metal³/metal3-dev-env&lt;/a&gt;. We will briefly discuss the steps involved in setting up the cluster as well as some of the customization available. If you want to know more about the architecture of Metal³, this &lt;a href=&quot;/blog/2020/02/27/talk-kubernetes-finland-metal3.html&quot;&gt;blogpost&lt;/a&gt; can be helpful.&lt;/p&gt;
+
+&lt;p&gt;This post builds upon the &lt;a href=&quot;/blog/2020/02/18/metal3-dev-env-install-deep-dive.html&quot;&gt;detailed metal3-dev-env walkthrough blogpost&lt;/a&gt; which describes in detail the steps involved in the environment set up and management cluster configuration. Here we will use that environment to deploy a new Kubernetes cluster using Metal³.&lt;/p&gt;
+
+&lt;p&gt;Before we get started, there are a couple of requirements we are expecting to be fulfilled.&lt;/p&gt;
+
+&lt;h2 id=&quot;requirements&quot;&gt;Requirements&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Metal³ is already deployed and working,  if not please follow the instructions in the previously mentioned &lt;a href=&quot;/blog/2020/02/18/metal3-dev-env-install-deep-dive.html&quot;&gt;detailed metal3-dev-env walkthrough blogpost&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;The appropriate environment variables are setup via shell or in the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;config_${user}.sh&lt;/code&gt; file, for example -
+    &lt;ul&gt;
+      &lt;li&gt;CAPI_VERSION&lt;/li&gt;
+      &lt;li&gt;NUM_NODES&lt;/li&gt;
+      &lt;li&gt;CLUSTER_NAME&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;overview-of-config-and-resource-types&quot;&gt;Overview of Config and Resource types&lt;/h2&gt;
+&lt;p&gt;In this section we give a brief overview of the important config files and resources used as part of the bare metal cluster deployment. 
+The following sub-sections show the config files and resources that are created and give a brief description about some of them. This will help you understand the technical details of the cluster deployment. You can also choose to skip this section, visit the next section about &lt;em&gt;provisioning&lt;/em&gt; first and then revisit this.&lt;/p&gt;
+
+&lt;h3 id=&quot;config-files-and-resources-types&quot;&gt;Config Files and Resources Types&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/2020-06-18-Metal3-dev-env-BareMetal-Cluster-Deployment/manifest-directory.png&quot; alt=&quot;&amp;quot;The directory tree for the ansible role used for deployment&amp;quot;&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Note&lt;/p&gt;&lt;p&gt;Among these the config files are rendered under the path &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test/files&lt;/code&gt; as part of the provisioning process.&lt;/p&gt;
+
+
+&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;A description of some of the files part of provisioning a cluster, in a centos based environment :&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Name&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+      &lt;th&gt;Path&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;(de)provisioning scripts&lt;/td&gt;
+      &lt;td&gt;Scripts to trigger provisioning or deprovisioning of cluster, control plane or worker&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/scripts/v1alphaX/&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test/templates&quot;&gt;templates directory&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Templates for cluster, control plane, worker definitions&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/vm-setup/roles/v1aX_integration_test/templates&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;clusterctl env file&lt;/td&gt;
+      &lt;td&gt;Cluster parameters and details&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${Manifests}/clusterctl_env_centos.rc&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test/tasks/generate_templates.yml&quot;&gt;generate templates&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Renders cluster, control plane and worker definitions in the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Manifest&lt;/code&gt; directory&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/vm-setup/roles/v1aX_integration_test/tasks/generate_templates.yml&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test/vars/main.yml&quot;&gt;main vars file&lt;/a&gt;&lt;/td&gt;
+      &lt;td&gt;Variable file that assigns all the defaults used during deployment&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/vm-setup/roles/v1aX_integration_test/vars/main.yml&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here are some of the resources that are created as part of provisioning :&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Name&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Cluster&lt;/td&gt;
+      &lt;td&gt;a Cluster API resource for managing a cluster&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Metal3Cluster&lt;/td&gt;
+      &lt;td&gt;Corresponding Metal3 resource generated as part of bare metal cluster deployment, and managed by &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Cluster&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;KubeadmControlPlane&lt;/td&gt;
+      &lt;td&gt;Cluster API resource for managing the control plane, it also manages the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; object, and has the &lt;strong&gt;KubeadmConfig&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;MachineDeployment&lt;/td&gt;
+      &lt;td&gt;Cluster API resource for managing workers via &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineSet&lt;/code&gt; object, it can be used to add/remove workers by scaling Up/Down&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;MachineSet&lt;/td&gt;
+      &lt;td&gt;Cluster API resource for managing &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; objects for worker nodes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Machine&lt;/td&gt;
+      &lt;td&gt;Cluster API resource for managing nodes - control plane or workers. In case of Controlplane, its directly managed by &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;KubeadmControlPlane&lt;/code&gt;, whereas for Workers it’s managed by a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineSet&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Metal3Machine&lt;/td&gt;
+      &lt;td&gt;Corresponding Metal3 resource for managing bare metal nodes, it’s managed by a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; resource&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Metal3MachineTemplate&lt;/td&gt;
+      &lt;td&gt;Metal3 resource which acts as a template when creating a control plane or a worker node&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;KubeadmConfigTemplate&lt;/td&gt;
+      &lt;td&gt;A template of &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;KubeadmConfig&lt;/code&gt;, for Workers, used to generate KubeadmConfig when a new worker node is provisioned&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; : The corresponding &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;KubeadmConfig&lt;/code&gt; is copied to the control plane/worker at the time of provisioning.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;bare-metal-cluster-deployment&quot;&gt;Bare Metal Cluster Deployment&lt;/h2&gt;
+
+&lt;p&gt;The deployment scripts primarily use ansible and the existing Kubernetes management cluster (based on minikube ) for deploying the bare-metal cluster. Make sure that some of the environment variables used for Metal³ deployment are set, if you didn’t use &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;config_${user}.sh&lt;/code&gt; for setting the environment variables.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Parameter&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+      &lt;th&gt;Default&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;CAPI_VERSION&lt;/td&gt;
+      &lt;td&gt;Version of Metal3 API4&lt;/td&gt;
+      &lt;td&gt;v1alpha3&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;POD_CIDR&lt;/td&gt;
+      &lt;td&gt;Pod Network CIDR&lt;/td&gt;
+      &lt;td&gt;192.168.0.0/18&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;CLUSTER_NAME&lt;/td&gt;
+      &lt;td&gt;Name of bare metal cluster&lt;/td&gt;
+      &lt;td&gt;test1&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;steps-involved&quot;&gt;Steps Involved&lt;/h3&gt;
+
+&lt;p&gt;All the scripts for cluster provisioning or deprovisioning are located at - &lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/scripts/v1alphaX&quot;&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/scripts/v1alphaX/&lt;/code&gt;&lt;/a&gt;. The scripts call a common playbook which handles all the tasks that are available.&lt;/p&gt;
+
+&lt;p&gt;The steps involved in the process are :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The script calls an ansible playbook with necessary parameter ( from env variables and defaults )&lt;/li&gt;
+  &lt;li&gt;The playbook executes the role -, &lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test&quot;&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/vm-setup/roles/v1aX_integration_test&lt;/code&gt;&lt;/a&gt;, which runs the main &lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test/tasks/main.yml&quot;&gt;task_file&lt;/a&gt; for provisioning/deprovisioning the cluster, control plane or a worker&lt;/li&gt;
+  &lt;li&gt;There are &lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/tree/master/vm-setup/roles/v1aX_integration_test/templates&quot;&gt;templates&lt;/a&gt; in the role, which are used to render configurations in the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Manifest&lt;/code&gt; directory. These configurations use kubeadm and are supplied to the Kubernetes module of ansible to create the cluster.&lt;/li&gt;
+  &lt;li&gt;During provisioning, first the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;clusterctl&lt;/code&gt; env file is generated, then the cluster, control plane and worker definition templates for &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;clusterctl&lt;/code&gt; are generated at &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${HOME}/.cluster-api/overrides/infrastructure-metal3/${CAPM3RELEASE}&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Using the templates generated in previous step, the definitions for resources related to cluster, control plane and worker are rendered using &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;clusterctl&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Centos or Ubuntu image &lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env/blob/master/vm-setup/roles/v1aX_integration_test/tasks/download_image.yml&quot;&gt;is downloaded&lt;/a&gt; in the next step.&lt;/li&gt;
+  &lt;li&gt;Finally using the above definitions, which are passed to the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;K8s&lt;/code&gt; module in ansible, the corresponding resource( cluster/control plane/worker ) is provisioned.&lt;/li&gt;
+  &lt;li&gt;These same definitions are reused at the time of deprovisioning the corresponding resource, again using the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;K8s&lt;/code&gt; module in ansible
+    &lt;blockquote&gt;
+      &lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; : The manifest directory is created when provisioning is triggered for the first time and is subsequently used to store the config files that are rendered for deploying the bare metal cluster.&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/2020-06-18-Metal3-dev-env-BareMetal-Cluster-Deployment/metal3-bmetal-arch-overview.png&quot; alt=&quot;&amp;quot;An Overview of various resources generated while provisioning and their relationship amongst themselves&amp;quot;&quot; /&gt;&lt;br /&gt;
+&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;provision-cluster&quot;&gt;Provision Cluster&lt;/h3&gt;
+&lt;p&gt;This script, located at the path - &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/scripts/v1alphaX/provision_clusters.sh&lt;/code&gt;, provisions the cluster by creating a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Metal3Cluster&lt;/code&gt; and a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Cluster&lt;/code&gt; resource.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+To see if you have a successful Cluster resource creation( the cluster still doesn’t have a control plane or workers ), just do :&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;kubectl get Metal3Cluster $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;This will return the cluster deployed, and you can check the cluster details by describing the returned resource.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Here is what a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Cluster&lt;/code&gt; resource looks like :&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;kubectl describe Cluster $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Cluster&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;......&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusterNetwork&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;pods&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;cidrBlocks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.0/18&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;cidrBlocks&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;10.96.0.0/12&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;controlPlaneEndpoint&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.111.249&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;6443&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;controlPlaneRef&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;controlplane.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;KubeadmControlPlane&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;infrastructureRef&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;infrastructure.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metal3Cluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;infrastructureReady&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;phase&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Provisioned&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;provision-controlplane&quot;&gt;Provision Controlplane&lt;/h3&gt;
+
+&lt;p&gt;This script, located at the path - &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env}/scripts/v1alphaX/provision_clusters.sh&lt;/code&gt;, provisions the control plane member of the cluster using the rendered definition of control plane explained in the &lt;strong&gt;Steps Involved&lt;/strong&gt; section. The &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;KubeadmControlPlane&lt;/code&gt; creates a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; which picks up a BareMetalHost satisfying its requirements as the control plane node, and it is then provisioned by the Bare Metal Operator. A &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Metal3MachineTemplate&lt;/code&gt; resource is also created as part of the provisioning process.&lt;/p&gt;
+
+&lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Note&lt;/p&gt;&lt;p&gt;It takes some time for the provisioning of the control plane, you can watch the process using some steps shared a bit later&lt;/p&gt;
+
+
+&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;kubectl get KubeadmControlPlane $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;span class=&quot;gp&quot;&gt;kubectl describe KubeadmControlPlane $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;controlplane.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;KubeadmControlPlane&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;....&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;ownerReferences&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;blockOwnerDeletion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;controller&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;true&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Cluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;aec0f73b-a068-4992-840d-6330bf943d22&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resourceVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;44555&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selfLink&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/apis/controlplane.cluster.x-k8s.io/v1alpha3/namespaces/metal3/kubeadmcontrolplanes/bmetalcluster&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;99487c75-30f1-4765-b895-0b83b0e5402b&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;infrastructureTemplate&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;infrastructure.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metal3MachineTemplate&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster-controlplane&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;kubeadmConfigSpec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;[....]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1.18.0&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/cluster-name=bmetalcluster,cluster.x-k8s.io/control-plane=&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unavailableReplicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;updatedReplicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;kubectl get Metal3MachineTemplate $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-controlplane&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;To track the progress of provisioning, you can try the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;kubectl get BareMetalHosts -n metal3 -w
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHosts&lt;/code&gt; resource is created when &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Metal³/metal3-dev-env&lt;/code&gt; was deployed. It is a kubernetes resource that represents a bare metal Machine, with all its details and configuration, and is managed by the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Bare Metal Operator&lt;/code&gt;. You can also use the short representation instead, i.e. &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;bmh&lt;/code&gt; ( short for &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHosts&lt;/code&gt;) in the command above.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;You should see all the nodes that were created at the time of metal3 deployment, along with their current status as the provisioning progresses&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Note&lt;/p&gt;&lt;p&gt;All the bare metal hosts listed above were created when Metal³ was deployed in the &lt;em&gt;detailed metal3-dev-env walkthrough blogpost&lt;/em&gt;.&lt;/p&gt;
+
+
+&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;kubectl get Machine -n metal3 -w
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;This shows the status of Machine associated with control plane and we can watch the status of provisioning under PHASE&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Once the provisioning is finished, let’s get the host-ip :&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;sudo virsh net-dhcp-leases baremetal
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Note&lt;/p&gt;&lt;p&gt;&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;baremetal&lt;/code&gt; is one of the 2 networks that were created at the time of Metal3 deployment, the other being “provisioning” which is used - as you have guessed - for provisioning the bare metal cluster. More details about networking setup in the metal3-dev-env environment are described in the - &lt;a href=&quot;/blog/2020/02/18/metal3-dev-env-install-deep-dive.html&quot;&gt;detailed metal3-dev-env walkthrough blogpost&lt;/a&gt;.&lt;/p&gt;
+
+
+&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;
+You can login to the control plane node if you want, and can check the deployment status using two methods.&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;ssh metal3@{control-plane-node-ip}
+ssh metal3@192.168.111.249
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;provision-workers&quot;&gt;Provision Workers&lt;/h3&gt;
+
+&lt;p&gt;The script is located at &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;${metal3-dev-env-path}/scripts/v1alphaX/provision_worker.sh&lt;/code&gt; and it provisions a node to be added as a worker to the bare metal cluster. It selects one of the remaining nodes and provisions it and adds it to the bare metal cluster ( which only has a control plane node at this point ). The resources created for workers are - &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineDeployment&lt;/code&gt; which can be scaled up to add more workers to the cluster and &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineSet&lt;/code&gt; which then creates a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Machine&lt;/code&gt; managing the node.&lt;/p&gt;
+
+&lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Note&lt;/p&gt;&lt;p&gt;Similar to a control plane provisioning, a worker provisioning also takes some time, and you can watch the process using steps shared a bit later. This will also apply when you scale Up/Down workers at a later point in time.&lt;/p&gt;
+
+
+&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;
+This is what a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;MachineDeployment&lt;/code&gt; looks like&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;kubectl describe MachineDeployment $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;MachineDeployment&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;....&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;ownerReferences&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Cluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;aec0f73b-a068-4992-840d-6330bf943d22&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resourceVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;66257&quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selfLink&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/apis/cluster.x-k8s.io/v1alpha3/namespaces/metal3/machinedeployments/bmetalcluster&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;uid&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;f598da43-0afe-44e4-b793-cd5244c13f4e&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusterName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;minReadySeconds&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;progressDeadlineSeconds&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;600&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;revisionHistoryLimit&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/cluster-name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;nodepool&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nodepool-0&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;strategy&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;rollingUpdate&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;maxSurge&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;maxUnavailable&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;RollingUpdate&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/cluster-name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;nodepool&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;nodepool-0&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;bootstrap&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;configRef&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bootstrap.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;KubeadmConfigTemplate&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster-workers&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;clusterName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;infrastructureRef&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;infrastructure.cluster.x-k8s.io/v1alpha3&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metal3MachineTemplate&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;bmetalcluster-workers&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1.18.0&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;observedGeneration&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;phase&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ScalingUp&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster.x-k8s.io/cluster-name=bmetalcluster,nodepool=nodepool-0&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;unavailableReplicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;updatedReplicas&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;
+To check the status we can follow steps similar to Controlplane case :&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;kubectl get bmh -n metal3 -w
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;We can see the live status of the node being provisioned. As mentioned before &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;bmh&lt;/code&gt; is short representation for &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;BareMetalHosts&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;kubectl get Machine -n metal3 -w
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;This shows the status of Machines associated with workers, apart from the one for Controlplane, and we can watch the status of provisioning under PHASE&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;sudo virsh net-dhcp-leases baremetal
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;To get the nodes IP&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;ssh metal3@{control-plane-node-ip}
+kubectl get nodes
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;To check if its added to the cluster&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;ssh metal3@{node-ip}
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;If you want to login to the node&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;kubectl scale --replicas=3 MachineDeployment $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;CLUSTER_NAME&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;We can add or remove workers to the cluster, we can scale up the MachineDeployment up or down, in this example we are adding 2 more worker nodes, making the total nodes = 3&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;deprovisioning&quot;&gt;Deprovisioning&lt;/h3&gt;
+
+&lt;p&gt;All of the previous components have corresponding deprovisioning scripts which use config files, in the previously mentioned manifest directory, and use them to clean up worker, control plane and cluster.&lt;/p&gt;
+
+&lt;p&gt;This step will use the already generated cluster/control plane/worker definition file, and supply it to &lt;strong&gt;Kubernetes&lt;/strong&gt; ansible module to remove/deprovision the resource. You can find it, under the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;Manifest&lt;/code&gt; directory, in the Snapshot shared at the beginning of this blogpost where we show the file structure.&lt;/p&gt;
+
+&lt;p&gt;For example if you wish to deprovision the cluster, you would do :&lt;/p&gt;
+
+&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;sh $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;metal3-dev-env-path&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/scripts/v1alphaX/deprovision_worker.sh
+&lt;span class=&quot;gp&quot;&gt;sh $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;metal3-dev-env-path&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/scripts/v1alphaX/deprovision_controlplane.sh
+&lt;span class=&quot;gp&quot;&gt;sh $&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;metal3-dev-env-path&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;/scripts/v1alphaX/deprovision_cluster.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Note :
+The reason for running the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;deprovision_worker.sh&lt;/code&gt; and &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;deprovision_controlplane.sh&lt;/code&gt; scripts is that not all objects are cleared when we just run the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;deprovision_cluster.sh&lt;/code&gt; script. Following this, if you want to deprovision control plane it is recommended to deprovision the cluster itself since we can’t provision a new control plane with the same cluster. For worker deprovisioning, we only need to run the worker script.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;In this blogpost we saw how to deploy a bare metal cluster once we have a Metal³(metal3-dev-env repo) deployed and by that point we will already have the nodes ready to be used for a bare metal cluster deployment.&lt;/p&gt;
+
+&lt;p&gt;In the first section we show the various configuration files, templates, resource types and their meanings.Then we see the common steps involved in the provisioning process. After that we see a general overview of how all resources are related and at what point are they created - provision cluster/control plane/worker.&lt;/p&gt;
+
+&lt;p&gt;In each of the provisioning sections we see the steps to monitor the provisioning and how to confirm if its successful or not, with brief explanations wherever required. Finally we see the deprovisioning section which uses the resource definitions generated at the time of provisioning to deprovision  cluster, control plane or worker.&lt;/p&gt;
+
+&lt;p&gt;Here are a few resources which you might find useful if you want to explore further, some of them have already been shared earlier.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://metal3.io/&quot;&gt;Metal3-Documentation&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://metal3.io/try-it.html&quot;&gt;Metal3-Try-it&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/metal3-io/metal3-dev-env&quot;&gt;Metal³/metal3-dev-env&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/blog/2020/02/18/metal3-dev-env-install-deep-dive.html&quot;&gt;Detailed metal3-dev-env walkthrough blogpost&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;/blog/2020/02/27/talk-kubernetes-finland-metal3.html&quot;&gt;Kubernetes Metal3 Talk&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/metal3-io/metal3-docs&quot;&gt;Metal3-Docs-github&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Himanshu Roy</name></author><summary type="html">Introduction</summary></entry><entry><title type="html">Cluster API provider renaming</title><link href="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html" rel="alternate" type="text/html" title="Cluster API provider renaming" /><published>2020-03-05T00:00:00+00:00</published><updated>2020-03-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/03/05/CAPI_provider_renaming</id><content type="html" xml:base="https://metal3.io/blog/2020/03/05/CAPI_provider_renaming.html">&lt;h2 id=&quot;renaming-of-cluster-api-provider&quot;&gt;Renaming of Cluster API provider&lt;/h2&gt;
 
 &lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p class=&quot;header&quot;&gt;Backwards compatibility for v1alpha3&lt;/p&gt;&lt;p&gt;There is no backwards compatibility between v1alpha3 and v1alpha2 releases of
 the Cluster API provider for Metal3.&lt;/p&gt;
@@ -1462,174 +1941,4 @@ She is an active core contributor and leader in OpenStack Ironic project, which 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.openstack.org/summit/denver-2019/summit-schedule/events/23779/openstack-ironic-and-bare-metal-infrastructure-all-abstractions-start-somewhere&quot;&gt;Open Infrastructure Summit, Denver, CO, April 29 - May 1, 2019&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.openstack.org/videos/summits/denver-2019/openstack-ironic-and-bare-metal-infrastructure-all-abstractions-start-somewhere&quot;&gt;OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Pedro Ibáñez Requena</name></author><summary type="html">Conference talk: OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere</summary></entry><entry><title type="html">Baremetal Operator</title><link href="https://metal3.io/blog/2019/09/11/Baremetal-operator.html" rel="alternate" type="text/html" title="Baremetal Operator" /><published>2019-09-11T11:00:00+00:00</published><updated>2019-09-11T11:00:00+00:00</updated><id>https://metal3.io/blog/2019/09/11/Baremetal-operator</id><content type="html" xml:base="https://metal3.io/blog/2019/09/11/Baremetal-operator.html">&lt;h2 id=&quot;introduction&quot;&gt;Introduction&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&quot;https://github.com/metal3-io/baremetal-operator/&quot;&gt;baremetal operator&lt;/a&gt;, documented at &lt;a href=&quot;https://github.com/metal3-io/baremetal-operator/blob/master/docs/api.md&quot;&gt;https://github.com/metal3-io/baremetal-operator/blob/master/docs/api.md&lt;/a&gt;, it’s the Operator in charge of definitions of physical hosts, containing information about how to reach the Out of Band management controller, URL with the desired image to provision, plus other properties related with hosts being used for provisioning instances.&lt;/p&gt;
-
-&lt;p&gt;Quoting from the project:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The Bare Metal Operator implements a Kubernetes API for managing bare metal hosts. It maintains an inventory of available hosts as instances of the BareMetalHost Custom Resource Definition. The Bare Metal Operator knows how to:
-Inspect the host’s hardware details and report them on the corresponding BareMetalHost. This includes information about CPUs, RAM, disks, NICs, and more.
-Provision hosts with a desired image
-Clean a host’s disk contents before or after provisioning.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;a-bit-more-in-deep-approach&quot;&gt;A bit more in deep approach&lt;/h2&gt;
-
-&lt;p&gt;The Baremetal Operator (BMO) keeps a mapping of each host and its management interfaces (vendor based like &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;iLO&lt;/code&gt;, &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;iDrac&lt;/code&gt;, &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;iRMC&lt;/code&gt;, etc) and controlled via &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPMI&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;All of this is defined in a &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;CRD&lt;/code&gt;, for example:&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Secret&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3-node01-credentials&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Opaque&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;YWRtaW4=&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;YWRtaW4=&lt;/span&gt;
-&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3.io/v1alpha1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;BareMetalHost&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3-node01&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;bmc&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipmi://172.22.0.2:6230&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;credentialsName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3-node01-credentials&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;bootMACAddress&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;00:c2:fc:3b:e1:01&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;hardwareProfile&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;libvirt&quot;&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;online&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;With above values (described in &lt;a href=&quot;https://github.com/metal3-io/baremetal-operator/blob/master/docs/api.md&quot;&gt;API&lt;/a&gt;), we’re telling the operator:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;MAC: Defines the mac address of the NIC connected to the network that will be used for provision the host&lt;/li&gt;
-  &lt;li&gt;bmc: defines the management controller address and the secret used&lt;/li&gt;
-  &lt;li&gt;credentialsName: Defines the name of the secret containing username/password for accessing the IPMI service&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Once the server is ‘defined’ via the CRD, the underlying service (provided by &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;ironic&lt;/code&gt;&lt;sup id=&quot;fnref:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; as of this writing) is inspected:&lt;/p&gt;
-
-&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;[root@metal3-kubernetes ~]#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;kubectl get baremetalhost &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
-&lt;span class=&quot;go&quot;&gt;NAME            STATUS   PROVISIONING STATUS   CONSUMER   BMC                      HARDWARE PROFILE   ONLINE   ERROR
-metal3-node01   OK       inspecting                       ipmi://172.22.0.1:6230                      false
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Once the inspection has finished, the status will change to &lt;em&gt;ready&lt;/em&gt; and made available for provisioning.&lt;/p&gt;
-
-&lt;p&gt;When we define a machine, we refer the images that will be used for the actual provisioning in the CRD (&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;image&lt;/code&gt;):&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;v1&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;userData&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;DATA&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Secret&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3-node01-user-data&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Opaque&lt;/span&gt;
-&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;cluster.k8s.io/v1alpha1&quot;&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Machine&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3-node01&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;generateName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;baremetal-machine-&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;providerSpec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;baremetal.cluster.k8s.io/v1alpha1&quot;&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;BareMetalMachineProviderSpec&quot;&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.2/images/CentOS-7-x86_64-GenericCloud-1901.qcow2&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;checksum&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;http://172.22.0.2/images/CentOS-7-x86_64-GenericCloud-1901.qcow2.md5sum&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;userData&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3-node01-user-data&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;metal3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;[root@metal3-kubernetes ~]#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;kubectl create &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; metal3-node01-machine.yml
-&lt;span class=&quot;go&quot;&gt;secret/metal3-node01-user-data created
-machine.cluster.k8s.io/metal3-node01 created
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Let’s examine the annotation created when provisioning (&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;metal3.io/BareMetalHost&lt;/code&gt;):&lt;/p&gt;
-
-&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;[root@metal3-kubernetes ~]#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;kubectl get machine &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3 metal3-node01 &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; yaml
-&lt;span class=&quot;go&quot;&gt;apiVersion: cluster.k8s.io/v1alpha1
-kind: Machine
-metadata:
-  annotations:
-    metal3.io/BareMetalHost: metal3/metal3-node01
-  creationTimestamp: &quot;2019-07-08T15:30:44Z&quot;
-  finalizers:
-  - machine.cluster.k8s.io
-  generateName: baremetal-machine-
-  generation: 2
-  name: metal3-node01
-  namespace: metal3
-  resourceVersion: &quot;6222&quot;
-  selfLink: /apis/cluster.k8s.io/v1alpha1/namespaces/metal3/machines/metal3-node01
-  uid: 1bfd384a-5467-43b7-98aa-e80e1ace5ce7
-spec:
-  metadata:
-    creationTimestamp: null
-  providerSpec:
-    value:
-      apiVersion: baremetal.cluster.k8s.io/v1alpha1
-      image:
-        checksum: http://172.22.0.1/images/CentOS-7-x86_64-GenericCloud-1901.qcow2.md5sum
-        url: http://172.22.0.1/images/CentOS-7-x86_64-GenericCloud-1901.qcow2
-      kind: BareMetalMachineProviderSpec
-      userData:
-        name: metal3-node01-user-data
-        namespace: metal3
-  versions:
-    kubelet: &quot;&quot;
-status:
-  addresses:
-  - address: 192.168.122.79
-    type: InternalIP
-  - address: 172.22.0.39
-    type: InternalIP
-  - address: localhost.localdomain
-    type: Hostname
-  lastUpdated: &quot;2019-07-08T15:30:44Z&quot;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;div class=&quot;premonition info&quot;&gt;&lt;div class=&quot;fa fa-info-circle&quot;&gt;&lt;/div&gt;&lt;div class=&quot;content&quot;&gt;&lt;p&gt;In the output above, the host assigned was the one we’ve defined earlier as well as the other parameters like IP’s, etc generated.&lt;/p&gt;
-
-
-&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now, if we check baremetal hosts, we can see how it’s getting provisioned:&lt;/p&gt;
-
-&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;[root@metal3-kubernetes ~]#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;kubectl get baremetalhost &lt;span class=&quot;nt&quot;&gt;-n&lt;/span&gt; metal3
-&lt;span class=&quot;go&quot;&gt;NAME            STATUS   PROVISIONING STATUS   CONSUMER   BMC                      HARDWARE PROFILE   ONLINE   ERROR
-metal3-node01   OK       provisioned                       ipmi://172.22.0.1:6230                     true
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And also, check it via the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;ironic&lt;/code&gt; command:&lt;/p&gt;
-
-&lt;div class=&quot;language-console highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;[root@metal3-kubernetes ~]#&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;OS_TOKEN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;fake-token &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;OS_URL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;http://localhost:6385 &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; openstack baremetal node list
-&lt;span class=&quot;go&quot;&gt;+--------------------------------------+---------------+--------------------------------------+-------------+--------------------+-------------+
-| UUID                                 | Name          | Instance UUID                        | Power State | Provisioning State | Maintenance |
-+--------------------------------------+---------------+--------------------------------------+-------------+--------------------+-------------+
-| 7551cfb4-d758-4ad8-9188-859ee53cf298 | metal3-node01 | 7551cfb4-d758-4ad8-9188-859ee53cf298 | power on    | active             | False       |
-+--------------------------------------+---------------+--------------------------------------+-------------+--------------------+-------------+
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;wrap-up&quot;&gt;Wrap-up&lt;/h2&gt;
-
-&lt;p&gt;We’ve seen how via a CRD we’ve defined credentials for a baremetal host to make it available to get provisioned and how we’ve also defined a machine that was provisioned on top of that baremetal host.&lt;/p&gt;
-&lt;div class=&quot;footnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:1&quot;&gt;
-      &lt;p&gt;Ironic was chosen as the initial provider for baremetal provisioning, check &lt;a href=&quot;https://github.com/metal3-io/metal3-docs/blob/master/design/use-ironic.md&quot;&gt;Ironic documentation&lt;/a&gt; for more details about Ironic usage in Metal³ &lt;a href=&quot;#fnref:1&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;</content><author><name>Pablo Iranzo Gómez</name></author><summary type="html">Introduction</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Pedro Ibáñez Requena</name></author><summary type="html">Conference talk: OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere</summary></entry></feed>
