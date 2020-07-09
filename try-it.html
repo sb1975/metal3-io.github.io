@@ -23,7 +23,7 @@
     <meta property="og:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes." >
     <meta property="og:site_name" content="Metal³ - Metal Kubed" >
     <meta property="og:article:author" content="The Metal³ - Metal Kubed website team" >
-    <meta property="og:article:published_time" content="2020-07-09 14:15:17 +0000" >
+    <meta property="og:article:published_time" content="2020-07-09 14:19:34 +0000" >
     <meta name="twitter:title" content="Try it: Getting started with Metal3.io | Metal³ - Metal Kubed">
     <meta name="twitter:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.">
 
@@ -260,31 +260,8 @@ will be Cluster API provider Metal3 (CAPM3).</p>
   <li>System with CentOS 8 or Ubuntu 18.04</li>
   <li>Bare metal preferred, as we will be creating VMs to emulate bare metal hosts</li>
   <li>Run as a user with passwordless sudo access</li>
-  <li>Resource requirements for the host machine vary depending on the selected
-Linux distribution of the target nodes:</li>
+  <li>Minimum resource requirements for the host machine: 4C CPUs, 16 GB RAM memory.</li>
 </ul>
-
-<table>
-  <thead>
-    <tr>
-      <th>Target distribution</th>
-      <th>host CPU</th>
-      <th>host memory (Gb)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Centos</td>
-      <td>4</td>
-      <td>32</td>
-    </tr>
-    <tr>
-      <td>Ubuntu</td>
-      <td>4</td>
-      <td>16</td>
-    </tr>
-  </tbody>
-</table>
 
 <div class="premonition warning"><div class="fa fa-exclamation-circle"></div><div class="content"><p class="header">Warning</p><p>The system can be running CentOS 7. However, note that there is an ongoing process to move to latest CentOS version. Therefore, in order to avoid future issues you might find, CentOS 8 is the preferred CentOS choice.</p>
 
@@ -334,10 +311,7 @@ successfully</p>
 <div class="premonition info"><div class="fa fa-info-circle"></div><div class="content"><p class="header">Note</p><p>you can also run some tests for provisioning and deprovisioning machines by
 running:</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="c"># for CAPI v1alpha1 based deployment</span>
-<span class="nv">$ </span>make test_v1a1
-<span class="c"># for CAPI v1alpha2, v1alpha3, v1alpha4 based deployment</span>
-<span class="nv">$ </span>make <span class="nb">test</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="nv">$ </span>make <span class="nb">test</span>
 </code></pre></div></div>
 
 
@@ -355,6 +329,12 @@ can configure the following</p>
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td>EPHEMERAL_CLUSTER</td>
+      <td>Tool for running management/ephemeral cluster.</td>
+      <td>minikube, kind</td>
+      <td>Ubuntu default is kind, while CentOS is minikube.</td>
+    </tr>
     <tr>
       <td>EXTERNAL_SUBNET</td>
       <td>This is the subnet used on the “baremetal” libvirt network, created as the primary network interface for the virtual bare metalhosts.</td>
@@ -484,7 +464,7 @@ can configure the following</p>
     <tr>
       <td>CAPI_VERSION</td>
       <td>Version of Cluster API</td>
-      <td>“v1alpha1”, “v1alpha2”, “v1alpha3”, “v1alpha4”</td>
+      <td>“v1alpha3”, “v1alpha4”</td>
       <td>“v1alpha3”</td>
     </tr>
     <tr>
@@ -561,7 +541,7 @@ can configure the following</p>
       <td>DEFAULT_HOSTS_MEMORY</td>
       <td>Set the default memory size in MB for the virtual machines provisioned.</td>
       <td> </td>
-      <td>Ubuntu default is 4096, while CentOS is 8192.</td>
+      <td>4096</td>
     </tr>
     <tr>
       <td>CLUSTER_NAME</td>
