@@ -1,4 +1,189 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-20T14:22:38+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Raw image streaming available in Metal3</title><link href="https://metal3.io/blog/2020/07/05/raw-image-streaming.html" rel="alternate" type="text/html" title="Raw image streaming available in Metal3" /><published>2020-07-05T00:00:00+00:00</published><updated>2020-07-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/05/raw-image-streaming</id><content type="html" xml:base="https://metal3.io/blog/2020/07/05/raw-image-streaming.html">&lt;p&gt;Metal3 supports multiple types of images for deployment, the most
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-21T14:09:35+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Introducing the Metal3 IP Address Manager</title><link href="https://metal3.io/blog/2020/07/06/IP_address_manager.html" rel="alternate" type="text/html" title="Introducing the Metal3 IP Address Manager" /><published>2020-07-06T00:00:00+00:00</published><updated>2020-07-06T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/06/IP_address_manager</id><content type="html" xml:base="https://metal3.io/blog/2020/07/06/IP_address_manager.html">&lt;p&gt;As a part of developing the Cluster API Provider Metal3 (CAPM3) v1alpha4
+release, the Metal3 crew introduced a new project : its own IP Address Manager.
+This blog post will go through the motivations behind such a project, the
+features that it brings, its use in Metal3 and the future work.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-the-ip-address-manager-&quot;&gt;What is the IP Address Manager ?&lt;/h2&gt;
+
+&lt;p&gt;The IP Address Manager (IPAM) is a controller that provides IP addresses and
+manages the allocations of IP subnets. It is not a DHCP server in that it only
+reconciles Kubernetes objects and does not answer to any DHCP queries. It
+allocates IP addresses on request, but does not handle any use of those
+addresses.&lt;/p&gt;
+
+&lt;p&gt;This sounds like the description of any IPAM system, no ? Well the twist
+is that this manager is based on Kubernetes to specifically handle some
+constraints from Metal3. We will go through the different issues that this
+project tackles.&lt;/p&gt;
+
+&lt;p&gt;When deploying nodes in bare metal environment, there are a lot of possible
+variations. This project specifically aims to solve the cases where static
+IP address configurations are needed. It is designed to specifically address
+this in the &lt;a href=&quot;https://cluster-api.sigs.k8s.io/&quot;&gt;Cluster API (CAPI) context&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;CAPI addresses the deployment of Kubernetes clusters and nodes, using
+the Kubernetes API. As such, it uses objects such as Machine Deployments
+(similar to deployments for pods) that takes care of creating the requested
+number of machines, based on templates. The replicas can be increased by the
+user, triggering the creation of new machines based on the provided templates.
+This mechanism does not allow for flexibility to be able to provide static
+addresses for each machine. The manager adds this flexibility by providing
+the address right before provisioning the node.&lt;/p&gt;
+
+&lt;p&gt;In addition, all the resources from the source cluster must support the CAPI
+pivoting, i.e. being copied and recreated in the target cluster. This means
+that all objects must contain all needed information in their spec field to
+recreate the status in the target cluster without losing information. All
+objects must, through a tree of owner references, be attached to the cluster
+object, for the pivoting to proceed properly.&lt;/p&gt;
+
+&lt;p&gt;In a nutshell, the manager provides an IP Address allocation service, based
+on Kubernetes API and fulfilling the needs of Metal3, specifically the
+requirements of CAPI.&lt;/p&gt;
+
+&lt;h2 id=&quot;how-does-it-work-&quot;&gt;How does it work ?&lt;/h2&gt;
+
+&lt;p&gt;The manager follows the same logic as the volume allocation in Kubernetes,
+with a claim and an object created for that claim. There are three type of
+objects defined, the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt;, the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; and the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt; objects.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; objects contain the definition of the IP subnets from which the
+Addresses are allocated. It supports both IPv4 and IPv6. The subnets can either
+be defined as such or given as a start and end IP addresses with a prefix.
+It also supports pre-allocating IP addresses.&lt;/p&gt;
+
+&lt;p&gt;The following is an example &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; definition :&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipam.metal3.io/v1alpha1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IPPool&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusterName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pools&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.10&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;end&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.30&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.1&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;subnet&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.1.1/26&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;subnet&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.1.128/25&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;24&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.1.1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;preAllocations&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;claim2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.12&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;An IPv6 &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; would be defined similarly :&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipam.metal3.io/v1alpha1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IPPool&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusterName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pools&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2001:0db8:85a3:0000:0000:8a2e::10&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;end&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2001:0db8:85a3:0000:0000:8a2e:ffff:fff0&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;96&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;12001:0db8:85a3:0000:0000:8a2e::1&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;subnet&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2001:0db8:85a3:0000:0000:8a2d::/96&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;96&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2001:0db8:85a3:0000:0000:8a2d::1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Whenever something requires an IP address from the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt;, it will create an
+&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt;. The &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; contains a pointer to the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; and an owner reference
+to the object that created it.&lt;/p&gt;
+
+&lt;p&gt;The following is an example of an &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipam.metal3.io/v1alpha1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IPClaim&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;claim1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pool&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1-192-168-0-13&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The controller will then reconcile this object and allocate an IP address. It
+will create an &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt; object representing the allocated address. It will
+then update the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; status to list the IP Address and the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; status
+to point to the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The following is an example of an &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipam.metal3.io/v1alpha1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IPAddress&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1-192-168-0-13&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pool&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;claim&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;claim1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.13&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;24&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After this allocation, the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; will be looking like :&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;syntax&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ipam.metal3.io/v1alpha1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IPPool&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;pool1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;clusterName&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;cluster1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pools&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.10&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;end&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.30&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;25&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.1&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;subnet&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.1.1/26&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;subnet&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.1.128/25&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;prefix&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;24&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;gateway&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.1.1&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;preAllocations&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;claim2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.12&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;indexes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;claim1&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.13&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;claim2&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;192.168.0.12&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;use-in-metal3&quot;&gt;Use in Metal3&lt;/h2&gt;
+
+&lt;p&gt;The IP Address Manager is used in Metal3 together with the metadata and network
+data templates feature. Each Metal3Machine (M3M) and Metal3MachineTemplate
+(M3MT) is associated with a Metal3DataTemplate that contains a metadata and /
+or a network data template that will be rendered for each Metal3Machine. The
+rendered data will then be provided to Ironic. Those templates reference
+&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt; objects. For each Metal3Machine, an &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; is created for each
+&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPPool&lt;/code&gt;, and the templates are rendered with the allocated &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is how we achieve dynamic IP Address allocations in setups that
+require static configuration, allowing us to use Machine Deployment and Kubeadm
+Control Plane objects from CAPI in hardware labs where DHCP is not supported.&lt;/p&gt;
+
+&lt;p&gt;Since each &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt; has an owner reference set to its &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; object, and
+&lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; objects have an owner reference set to the Metal3Data object created
+from the Metal3DataTemplate, the owner reference chain links a Metal3Machine to
+all the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPClaim&lt;/code&gt; and &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;IPAddress&lt;/code&gt; objects created for it, allowing for CAPI
+pivoting.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-now-&quot;&gt;What now ?&lt;/h2&gt;
+
+&lt;p&gt;The project is fulfilling its basic requirements, but we are looking into
+extending it and covering more use-cases. For example we are looking at
+adding an integration with Infoblox and other external IPAM services. Do not
+hesitate to open an issue if you have some ideas for new features!&lt;/p&gt;
+
+&lt;p&gt;The project can be found
+&lt;a href=&quot;https://github.com/metal3-io/ip-address-manager&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;</content><author><name>Maël Kimmerlin</name></author><summary type="html">As a part of developing the Cluster API Provider Metal3 (CAPM3) v1alpha4 release, the Metal3 crew introduced a new project : its own IP Address Manager. This blog post will go through the motivations behind such a project, the features that it brings, its use in Metal3 and the future work.</summary></entry><entry><title type="html">Raw image streaming available in Metal3</title><link href="https://metal3.io/blog/2020/07/05/raw-image-streaming.html" rel="alternate" type="text/html" title="Raw image streaming available in Metal3" /><published>2020-07-05T00:00:00+00:00</published><updated>2020-07-05T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/05/raw-image-streaming</id><content type="html" xml:base="https://metal3.io/blog/2020/07/05/raw-image-streaming.html">&lt;p&gt;Metal3 supports multiple types of images for deployment, the most
 popular being QCOW2. We have recently added support for a feature of Ironic
 that improves deployments on constrained environments, raw image streaming.
 We’ll first dive into how Ironic deploys the images on the target hosts, and
@@ -1921,24 +2106,4 @@ metal3        metal3-baremetal-operator-78bffc8d-z5hqs    6/6     Running   0   
 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;https://openinfradays.sched.com/event/KMyE&quot;&gt;Open Infrastructure Days UK 2019, Kubernetes-native Infrastructure: Managed Baremetal with Kubernetes Operators and OpenStack Ironic - Steve Hardy, Red Hat&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Pedro Ibáñez Requena</name></author><summary type="html">Conference talk: Open Infrastructure Days UK 2019; Kubernetes-native Infrastructure: Managed Baremetal with Kubernetes Operators and OpenStack Ironic - Steve Hardy, Red Hat</summary></entry><entry><title type="html">OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere - Chris Hoge, OpenStack Foundation; Julia Kreger, Red Hat</title><link href="https://metal3.io/blog/2019/10/31/OpenStack-Ironic-and-Bare-Metal-Infrastructure_All-Abstractions-Start-Somewhere.html" rel="alternate" type="text/html" title="OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere - Chris Hoge, OpenStack Foundation; Julia Kreger, Red Hat" /><published>2019-10-31T06:25:00+00:00</published><updated>2019-10-31T06:25:00+00:00</updated><id>https://metal3.io/blog/2019/10/31/OpenStack-Ironic-and-Bare-Metal-Infrastructure_All-Abstractions-Start-Somewhere</id><content type="html" xml:base="https://metal3.io/blog/2019/10/31/OpenStack-Ironic-and-Bare-Metal-Infrastructure_All-Abstractions-Start-Somewhere.html">&lt;h2 id=&quot;conference-talk-openstack-ironic-and-bare-metal-infrastructure-all-abstractions-start-somewhere&quot;&gt;Conference talk: OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere&lt;/h2&gt;
-
-&lt;p&gt;The history of cloud computing has rapidly layered abstractions on abstractions to deliver applications faster, more reliably, and easier. Serverless functions on top of containers on top of virtualization. However, at the bottom of every stack is physical hardware that has an entire lifecycle that needs to be managed.&lt;/p&gt;
-
-&lt;p&gt;In this video, Chris and Julia show how OpenStack Ironic is a solution to the problem of managing bare-metal infrastructure.&lt;/p&gt;
-
-&lt;iframe width=&quot;560&quot; height=&quot;315&quot; style=&quot;height: 315px&quot; src=&quot;https://www.youtube.com/embed/Nzq2S53nk9U&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
-
-&lt;h2 id=&quot;speakers&quot;&gt;Speakers&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://twitter.com/hogepodge&quot;&gt;Chris Hoge&lt;/a&gt; is a Senior Strategic Program Manager for the OpenStack foundation. He’s been an active contributor to the Interop Working Group (formerly DefCore), and helps run the trademark program for the OpenStack Foundation. He also works on collaborations between the OpenStack and Kubernetes communities. Previously he worked as an OpenStack community manager and developer at Puppet Labs, and operated a research cloud for the College of Arts and Sciences at The University of Oregon. When not cloud computing, he enjoys long-distance running, dancing, and throwing a ball for his Border Collie.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://twitter.com/ashinclouds&quot;&gt;Julia Kreger&lt;/a&gt; is Principal Software Engineer at Red Hat. She started her career in networking and eventually shifted to systems engineering. The DevOps movement lead her into software development and the operationalization of software due to the need to automate large scale systems deployments. She is experienced in conveying an operational perspective while bridging that with requirements and doesn’t mind getting deep down into code to solve a problem.
-She is an active core contributor and leader in OpenStack Ironic project, which is a project she feels passionate about due to many misspent hours in data centers deploying hardware. Prior to OpenStack, Julia contributed to the Shared Learning Infrastructure and worked with large scale litigation database systems.&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.openstack.org/summit/denver-2019/summit-schedule/events/23779/openstack-ironic-and-bare-metal-infrastructure-all-abstractions-start-somewhere&quot;&gt;Open Infrastructure Summit, Denver, CO, April 29 - May 1, 2019&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.openstack.org/videos/summits/denver-2019/openstack-ironic-and-bare-metal-infrastructure-all-abstractions-start-somewhere&quot;&gt;OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>Pedro Ibáñez Requena</name></author><summary type="html">Conference talk: OpenStack Ironic and Bare Metal Infrastructure: All Abstractions Start Somewhere</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>Pedro Ibáñez Requena</name></author><summary type="html">Conference talk: Open Infrastructure Days UK 2019; Kubernetes-native Infrastructure: Managed Baremetal with Kubernetes Operators and OpenStack Ironic - Steve Hardy, Red Hat</summary></entry></feed>

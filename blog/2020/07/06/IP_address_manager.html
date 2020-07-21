@@ -9,22 +9,22 @@
     <link rel="shortcut icon" type="image/png" href="/favicon.png">
     <meta name="theme-color" content="#008585">
     
-    <title>Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin - Kubernetes and CNCF Finland Meetup | Metal³ - Metal Kubed</title>
+    <title>Introducing the Metal3 IP Address Manager | Metal³ - Metal Kubed</title>
     <!-- # Opengraph protocol properties: https://ogp.me/ -->
-    <meta name="author" content="Alberto Losada" >
+    <meta name="author" content="Maël Kimmerlin" >
     <meta property="og:type" content="article" >
     <meta name="twitter:card" content="summary">
     <meta name="description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.">
-    <meta name="keywords" content="metal3, baremetal, talk, conference, kubernetes, meetup" >
-    <meta property="og:title" content="Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin - Kubernetes and CNCF Finland Meetup | Metal³ - Metal Kubed">
+    <meta name="keywords" content="metal3, baremetal, IPAM, ip address manager" >
+    <meta property="og:title" content="Introducing the Metal3 IP Address Manager | Metal³ - Metal Kubed">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://metal3.io/blog/2020/02/27/talk-kubernetes-finland-metal3.html" >
+    <meta property="og:url" content="https://metal3.io/blog/2020/07/06/IP_address_manager.html" >
     <meta property="og:image" content="https://metal3.io/assets/images/metal3logo.png">
     <meta property="og:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes." >
     <meta property="og:site_name" content="Metal³ - Metal Kubed" >
-    <meta property="og:article:author" content="Alberto Losada" >
-    <meta property="og:article:published_time" content="2020-02-27 00:00:00 +0000" >
-    <meta name="twitter:title" content="Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin - Kubernetes and CNCF Finland Meetup | Metal³ - Metal Kubed">
+    <meta property="og:article:author" content="Maël Kimmerlin" >
+    <meta property="og:article:published_time" content="2020-07-06 00:00:00 +0000" >
+    <meta name="twitter:title" content="Introducing the Metal3 IP Address Manager | Metal³ - Metal Kubed">
     <meta name="twitter:description" content="Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.">
 
     <link type="application/atom+xml" rel="alternate" href="https://metal3.io/feed.xml" title="Metal³ - Metal Kubed" />
@@ -216,9 +216,9 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </section>
 <main class="mk-main mk-blog">
             <article class="mk-main__section mk-main__content mk-main__section__content">
-                    <h1 class="mk-heading--lg mk-heading mk-m-border mk-blog__post__title">Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin - Kubernetes and CNCF Finland Meetup</h1>
-                    <time datetime="1999-12-23" class="mk-blog-meta__timestamp mk-blog-meta__item mk-blog-meta__timestamp--light">Thursday, 27/02/2020</time>
-                    <div class="mk-blog-meta__item mk-blog-meta__author">By Alberto Losada</div>
+                    <h1 class="mk-heading--lg mk-heading mk-m-border mk-blog__post__title">Introducing the Metal3 IP Address Manager</h1>
+                    <time datetime="1999-12-23" class="mk-blog-meta__timestamp mk-blog-meta__item mk-blog-meta__timestamp--light">Monday, 6/07/2020</time>
+                    <div class="mk-blog-meta__item mk-blog-meta__author">By Maël Kimmerlin</div>
                     <div class="mk-blog-meta__categories">
                                 
                                 <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#metal3">
@@ -229,27 +229,19 @@ autocomplete(document.getElementById("search-input"), mykeywords);
                                   baremetal
                                 </a>
                               
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#talk">
-                                  talk
+                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#ipam">
+                                  ipam
                                 </a>
                               
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#conference">
-                                  conference
-                                </a>
-                              
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#kubernetes">
-                                  kubernetes
-                                </a>
-                              
-                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#meetup">
-                                  meetup
+                                <a class="mk-blog-meta__item mk-blog-meta__category" href="/blog/categories.html#ip-address-manager">
+                                  ip-address-manager
                                 </a>
                               
                 </div>
 
 <div class="mk-share-buttons">
 
-           <!-- <a class="mk-share-buttons__item" href="https://www.facebook.com/sharer/sharer.php?u=https://metal3.io/blog/2020/02/27/talk-kubernetes-finland-metal3.html"
+           <!-- <a class="mk-share-buttons__item" href="https://www.facebook.com/sharer/sharer.php?u=https://metal3.io/blog/2020/07/06/IP_address_manager.html"
             onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
             title="Share on Facebook" >
             <?xml version="1.0" encoding="UTF-8"?>
@@ -259,7 +251,7 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </svg>Share on Facebook</a> -->
 
 
-        <a class="mk-share-buttons__item" href="https://twitter.com/intent/tweet?text=Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin - Kubernetes and CNCF Finland Meetup&url=https://metal3.io/blog/2020/02/27/talk-kubernetes-finland-metal3.html"
+        <a class="mk-share-buttons__item" href="https://twitter.com/intent/tweet?text=Introducing the Metal3 IP Address Manager&url=https://metal3.io/blog/2020/07/06/IP_address_manager.html"
         onclick="window.open(this.href, 'pop-up', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;"
         title="Share on Twitter" >
         <?xml version="1.0" encoding="UTF-8"?>
@@ -268,78 +260,203 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </svg> Share on Twitter
     </a>
 </div>
-        <h2 id="conference-talk-metal-kubernetes-native-bare-metal-cluster-management---maël-kimmerlin">Conference talk: Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin</h2>
+        <p>As a part of developing the Cluster API Provider Metal3 (CAPM3) v1alpha4
+release, the Metal3 crew introduced a new project : its own IP Address Manager.
+This blog post will go through the motivations behind such a project, the
+features that it brings, its use in Metal3 and the future work.</p>
 
-<p>On the 20th of January at the <a href="https://www.meetup.com/Kubernetes-Finland/">Kubernetes and CNCF Finland Meetup</a>, Maël Kimmerlin gave a brilliant presentation about the status of the Metal³ project.</p>
+<h2 id="what-is-the-ip-address-manager-">What is the IP Address Manager ?</h2>
 
-<p>In this presentation, Maël starts giving a short introduction of the <a href="https://github.com/kubernetes-sigs/cluster-api">Cluster API project</a> which provides a solid foundation to develop the Metal³ Bare Metal Operator (BMO). The talk basically focuses on the <strong>v1alpha2</strong> infrastructure provider features from the Cluster API.</p>
+<p>The IP Address Manager (IPAM) is a controller that provides IP addresses and
+manages the allocations of IP subnets. It is not a DHCP server in that it only
+reconciles Kubernetes objects and does not answer to any DHCP queries. It
+allocates IP addresses on request, but does not handle any use of those
+addresses.</p>
 
-<div class="premonition info"><div class="fa fa-info-circle"></div><div class="content"><p class="header">Information</p><p>The video recording from the “Kubernetes and CNCF Finland Meetup” is composed by three talks. The video embedded starts with Maël’s talk.</p>
+<p>This sounds like the description of any IPAM system, no ? Well the twist
+is that this manager is based on Kubernetes to specifically handle some
+constraints from Metal3. We will go through the different issues that this
+project tackles.</p>
 
+<p>When deploying nodes in bare metal environment, there are a lot of possible
+variations. This project specifically aims to solve the cases where static
+IP address configurations are needed. It is designed to specifically address
+this in the <a href="https://cluster-api.sigs.k8s.io/">Cluster API (CAPI) context</a>.</p>
 
-</div></div>
-<div class="premonition warning"><div class="fa fa-exclamation-circle"></div><div class="content"><p class="header">Warning</p><p>Playback of the video has been disabled by the author. Click on play button and then on “Watch this video on Youtube” link once it appears.</p>
+<p>CAPI addresses the deployment of Kubernetes clusters and nodes, using
+the Kubernetes API. As such, it uses objects such as Machine Deployments
+(similar to deployments for pods) that takes care of creating the requested
+number of machines, based on templates. The replicas can be increased by the
+user, triggering the creation of new machines based on the provided templates.
+This mechanism does not allow for flexibility to be able to provide static
+addresses for each machine. The manager adds this flexibility by providing
+the address right before provisioning the node.</p>
 
+<p>In addition, all the resources from the source cluster must support the CAPI
+pivoting, i.e. being copied and recreated in the target cluster. This means
+that all objects must contain all needed information in their spec field to
+recreate the status in the target cluster without losing information. All
+objects must, through a tree of owner references, be attached to the cluster
+object, for the pivoting to proceed properly.</p>
 
-</div></div>
-<iframe width="1110" height="720" style="height: 500px" src="https://www.youtube.com/embed/3k5EfIQpw-E?t=4167" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+<p>In a nutshell, the manager provides an IP Address allocation service, based
+on Kubernetes API and fulfilling the needs of Metal3, specifically the
+requirements of CAPI.</p>
 
-<p><br /></p>
+<h2 id="how-does-it-work-">How does it work ?</h2>
 
-<p>During the first part of the presentation, a detailed explanation of the different Kubernetes Custom Resource Definitions (CRDs) inside Metal³ is shown and also how they are linked with the Cluster API project. As an example, the image below shows the interaction between objects and controllers from both projects:</p>
+<p>The manager follows the same logic as the volume allocation in Kubernetes,
+with a claim and an object created for that claim. There are three type of
+objects defined, the <code class="language-html highlighter-rouge">IPPool</code>, the <code class="language-html highlighter-rouge">IPClaim</code> and the <code class="language-html highlighter-rouge">IPAddress</code> objects.</p>
 
-<p><img src="/assets/2020-02-27-talk-kubernetes-finland-metal3/metal3-crds-controllers.resized.png" alt="crd v1alpha2" /></p>
+<p>The <code class="language-html highlighter-rouge">IPPool</code> objects contain the definition of the IP subnets from which the
+Addresses are allocated. It supports both IPv4 and IPv6. The subnets can either
+be defined as such or given as a start and end IP addresses with a prefix.
+It also supports pre-allocating IP addresses.</p>
 
-<p>Once finished the introductory part, Maël focuses on the main components of the Metal³ BMO and the provisioning process. This process starts with <strong>introspection</strong>, where the bare metal server is registered by the operator. Then, the <a href="https://docs.openstack.org/ironic-python-agent/latest/">Ironic Python Agent</a> (IPA) image is executed to collect all hardware information from the server.</p>
+<p>The following is an example <code class="language-html highlighter-rouge">IPPool</code> definition :</p>
 
-<p><img src="/assets/2020-02-27-talk-kubernetes-finland-metal3/metal3-instrospection.resized.png" alt="metal3 introspection" /></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">ipam.metal3.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">IPPool</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">pool1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">clusterName</span><span class="pi">:</span> <span class="s">cluster1</span>
+  <span class="na">pools</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">start</span><span class="pi">:</span> <span class="s">192.168.0.10</span>
+      <span class="na">end</span><span class="pi">:</span> <span class="s">192.168.0.30</span>
+      <span class="na">prefix</span><span class="pi">:</span> <span class="m">25</span>
+      <span class="na">gateway</span><span class="pi">:</span> <span class="s">192.168.0.1</span>
+    <span class="pi">-</span> <span class="na">subnet</span><span class="pi">:</span> <span class="s">192.168.1.1/26</span>
+    <span class="pi">-</span> <span class="na">subnet</span><span class="pi">:</span> <span class="s">192.168.1.128/25</span>
+  <span class="na">prefix</span><span class="pi">:</span> <span class="m">24</span>
+  <span class="na">gateway</span><span class="pi">:</span> <span class="s">192.168.1.1</span>
+  <span class="na">preAllocations</span><span class="pi">:</span>
+    <span class="na">claim2</span><span class="pi">:</span> <span class="s">192.168.0.12</span>
+</code></pre></div></div>
 
-<p><br />
-The second part of the process is the <strong>provisioning</strong>. In this step, Maël explains how the Bare Metal Operator (BMO) is in charge along with Ironic to present the Operating System image to the physical server and complete its installation.</p>
+<p>An IPv6 <code class="language-html highlighter-rouge">IPPool</code> would be defined similarly :</p>
 
-<p><img src="/assets/2020-02-27-talk-kubernetes-finland-metal3/metal3-provisioning.resized.png" alt="metal3 provisioning" /></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">ipam.metal3.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">IPPool</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">pool1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">clusterName</span><span class="pi">:</span> <span class="s">cluster1</span>
+  <span class="na">pools</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">start</span><span class="pi">:</span> <span class="s">2001:0db8:85a3:0000:0000:8a2e::10</span>
+      <span class="na">end</span><span class="pi">:</span> <span class="s">2001:0db8:85a3:0000:0000:8a2e:ffff:fff0</span>
+      <span class="na">prefix</span><span class="pi">:</span> <span class="m">96</span>
+      <span class="na">gateway</span><span class="pi">:</span> <span class="s">12001:0db8:85a3:0000:0000:8a2e::1</span>
+    <span class="pi">-</span> <span class="na">subnet</span><span class="pi">:</span> <span class="s">2001:0db8:85a3:0000:0000:8a2d::/96</span>
+  <span class="na">prefix</span><span class="pi">:</span> <span class="m">96</span>
+  <span class="na">gateway</span><span class="pi">:</span> <span class="s">2001:0db8:85a3:0000:0000:8a2d::1</span>
+</code></pre></div></div>
 
-<p><br />
-Next, Maël deeply explains each Custom Resource (CR) used during the provisioning of target Kubernetes clusters in bare metal servers. He refers to objects such as <code class="language-html highlighter-rouge">Cluster</code>, <code class="language-html highlighter-rouge">BareMetalCluster</code>, <code class="language-html highlighter-rouge">Machine</code>, <code class="language-html highlighter-rouge">BareMetalMachine</code>, <code class="language-html highlighter-rouge">BareMetalHost</code> and so on. Each one is clarified with a YAML file definition of a real case and a workflow diagram that shows the reconciliation procedure.</p>
+<p>Whenever something requires an IP address from the <code class="language-html highlighter-rouge">IPPool</code>, it will create an
+<code class="language-html highlighter-rouge">IPClaim</code>. The <code class="language-html highlighter-rouge">IPClaim</code> contains a pointer to the <code class="language-html highlighter-rouge">IPPool</code> and an owner reference
+to the object that created it.</p>
 
-<p>Last part of the talk is dedicated to execute a demo where Maël creates a <em>target Kubernetes cluster</em> from a running minikube VM (also called <em>bootstrap cluster</em>) where Metal³ is deployed. As it is pointed out in the video, the demo is running in <em>emulated hardware</em>. Actually, something similar to the <a href="https://github.com/metal3-io/metal3-dev-env">metal3-dev-env</a> project which can be used to reproduce the demo. More information of the Metal³ development environment (metal3-dev-env) can be found in the <a href="https://metal3.io/try-it.html">Metal³ try-it section</a>. In case you want to go deeper, take a look at the blog post <a href="/blog/2020/02/18/metal3-dev-env-install-deep-dive.html">A detailed walkthrough of the Metal³ development environment</a>.</p>
+<p>The following is an example of an <code class="language-html highlighter-rouge">IPClaim</code>:</p>
 
-<p>At the end, the result is a new Kubernetes cluster up and running. The cluster is deployed on two emulated physical servers: one runs as the control-plane node and the other as a worker node.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">ipam.metal3.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">IPClaim</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">claim1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">pool</span><span class="pi">:</span>
+    <span class="na">Name</span><span class="pi">:</span> <span class="s">pool1</span>
+<span class="na">status</span><span class="pi">:</span>
+  <span class="na">address</span><span class="pi">:</span>
+    <span class="na">Name</span><span class="pi">:</span> <span class="s">pool1-192-168-0-13</span>
+</code></pre></div></div>
 
-<div class="premonition info"><div class="fa fa-info-circle"></div><div class="content"><p class="header">Information</p><p>The slides of the talk can be downloaded from <a href="https://drive.google.com/open?id=1mdofzqIpH7XpFYkjB0ZC7EWU_RGW6aOl">here</a></p>
+<p>The controller will then reconcile this object and allocate an IP address. It
+will create an <code class="language-html highlighter-rouge">IPAddress</code> object representing the allocated address. It will
+then update the <code class="language-html highlighter-rouge">IPPool</code> status to list the IP Address and the <code class="language-html highlighter-rouge">IPClaim</code> status
+to point to the <code class="language-html highlighter-rouge">IPAddress</code>.</p>
 
+<p>The following is an example of an <code class="language-html highlighter-rouge">IPAddress</code>:</p>
 
-</div></div>
-<h2 id="speakers">Speakers</h2>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">ipam.metal3.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">IPAddress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">pool1-192-168-0-13</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">pool</span><span class="pi">:</span>
+    <span class="na">Name</span><span class="pi">:</span> <span class="s">pool1</span>
+  <span class="na">claim</span><span class="pi">:</span>
+    <span class="na">Name</span><span class="pi">:</span> <span class="s">claim1</span>
+  <span class="na">address</span><span class="pi">:</span> <span class="s">192.168.0.13</span>
+  <span class="na">prefix</span><span class="pi">:</span> <span class="m">24</span>
+  <span class="na">gateway</span><span class="pi">:</span> <span class="s">192.168.0.1</span>
+</code></pre></div></div>
 
-<p><a href="https://www.linkedin.com/in/maelkimmerlin/">Maël Kimmerlin</a> Maël Kimmerlin is a Senior Software Engineer at Ericsson. In his own words:</p>
+<p>After this allocation, the <code class="language-html highlighter-rouge">IPPool</code> will be looking like :</p>
 
-<p><em>I am an open-source enthusiast, focusing in Ericsson on Life Cycle Management of Kubernetes clusters on Bare Metal. I am very interested in the Cluster API project from the Kubernetes Lifecycle SIG, and active in its Bare Metal provider, that is Metal³, developing and encouraging the adoption of this project.</em></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="syntax"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">ipam.metal3.io/v1alpha1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">IPPool</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">pool1</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">clusterName</span><span class="pi">:</span> <span class="s">cluster1</span>
+  <span class="na">pools</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">start</span><span class="pi">:</span> <span class="s">192.168.0.10</span>
+      <span class="na">end</span><span class="pi">:</span> <span class="s">192.168.0.30</span>
+      <span class="na">prefix</span><span class="pi">:</span> <span class="m">25</span>
+      <span class="na">gateway</span><span class="pi">:</span> <span class="s">192.168.0.1</span>
+    <span class="pi">-</span> <span class="na">subnet</span><span class="pi">:</span> <span class="s">192.168.1.1/26</span>
+    <span class="pi">-</span> <span class="na">subnet</span><span class="pi">:</span> <span class="s">192.168.1.128/25</span>
+  <span class="na">prefix</span><span class="pi">:</span> <span class="m">24</span>
+  <span class="na">gateway</span><span class="pi">:</span> <span class="s">192.168.1.1</span>
+  <span class="na">preAllocations</span><span class="pi">:</span>
+    <span class="na">claim2</span><span class="pi">:</span> <span class="s">192.168.0.12</span>
+<span class="na">status</span><span class="pi">:</span>
+  <span class="na">indexes</span><span class="pi">:</span>
+    <span class="na">claim1</span><span class="pi">:</span> <span class="s">192.168.0.13</span>
+    <span class="na">claim2</span><span class="pi">:</span> <span class="s">192.168.0.12</span>
+</code></pre></div></div>
 
-<h2 id="references">References</h2>
+<h2 id="use-in-metal3">Use in Metal3</h2>
 
-<ul>
-  <li><a href="https://youtu.be/3k5EfIQpw-E?t=4167">Video: Metal³: Kubernetes Native Bare Metal Cluster Management</a></li>
-  <li><a href="https://drive.google.com/open?id=1mdofzqIpH7XpFYkjB0ZC7EWU_RGW6aOl">Slides</a></li>
-</ul>
+<p>The IP Address Manager is used in Metal3 together with the metadata and network
+data templates feature. Each Metal3Machine (M3M) and Metal3MachineTemplate
+(M3MT) is associated with a Metal3DataTemplate that contains a metadata and /
+or a network data template that will be rendered for each Metal3Machine. The
+rendered data will then be provided to Ironic. Those templates reference
+<code class="language-html highlighter-rouge">IPPool</code> objects. For each Metal3Machine, an <code class="language-html highlighter-rouge">IPClaim</code> is created for each
+<code class="language-html highlighter-rouge">IPPool</code>, and the templates are rendered with the allocated <code class="language-html highlighter-rouge">IPAddress</code>.</p>
+
+<p>This is how we achieve dynamic IP Address allocations in setups that
+require static configuration, allowing us to use Machine Deployment and Kubeadm
+Control Plane objects from CAPI in hardware labs where DHCP is not supported.</p>
+
+<p>Since each <code class="language-html highlighter-rouge">IPAddress</code> has an owner reference set to its <code class="language-html highlighter-rouge">IPClaim</code> object, and
+<code class="language-html highlighter-rouge">IPClaim</code> objects have an owner reference set to the Metal3Data object created
+from the Metal3DataTemplate, the owner reference chain links a Metal3Machine to
+all the <code class="language-html highlighter-rouge">IPClaim</code> and <code class="language-html highlighter-rouge">IPAddress</code> objects created for it, allowing for CAPI
+pivoting.</p>
+
+<h2 id="what-now-">What now ?</h2>
+
+<p>The project is fulfilling its basic requirements, but we are looking into
+extending it and covering more use-cases. For example we are looking at
+adding an integration with Infoblox and other external IPAM services. Do not
+hesitate to open an issue if you have some ideas for new features!</p>
+
+<p>The project can be found
+<a href="https://github.com/metal3-io/ip-address-manager">here</a>.</p>
 
 </article>
 <nav class="mk-pagination">
         
-          <a class="mk-pagination__page mk-pagination__page--prev" href="/blog/2020/02/18/metal3-dev-env-install-deep-dive.html" aria-label="previous page">
+          <a class="mk-pagination__page mk-pagination__page--prev" href="/blog/2020/07/05/raw-image-streaming.html" aria-label="previous page">
                 <?xml version="1.0" encoding="UTF-8"?>
                 <svg enable-background="new 0 0 398.7 320.1" version="1.1" viewBox="0 0 398.7 320.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
                 <path d="m199 143.1l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9l-96.3 96.5 96.4 96.4c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.3-9.5-24.6-0.1-33.9zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-96.3-96.5 96.4-96.4c9.4-9.4 9.4-24.6 0-33.9l-22.6-22.7c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.3-9.5 24.6-0.1 34z"/>
                 </svg>
           </a>
         
-        
-          <a class="mk-pagination__page mk-pagination__page--next" href="/blog/2020/03/05/CAPI_provider_renaming.html" aria-label="next page">
-                <?xml version="1.0" encoding="UTF-8"?>
-                <svg enable-background="new 0 0 398.6 320.1" version="1.1" viewBox="0 0 398.6 320.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-                <path d="m199.6 177.1l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.7c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.5-96.3c-9.4-9.4-9.4-24.6 0-33.9l22.6-22.8c9.4-9.4 24.6-9.4 33.9 0l136 136c9.4 9.3 9.4 24.6 0.1 34zm191.9-34l-136-136c-9.4-9.4-24.6-9.4-33.9 0l-22.6 22.5c-9.4 9.4-9.4 24.6 0 33.9l96.4 96.4-96.4 96.4c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l136-136c9.4-9.2 9.4-24.4 0-33.7z"/>
-                </svg>
-          </a>
         
 </nav>
 
@@ -357,10 +474,6 @@ Next, Maël deeply explains each Custom Resource (CR) used during the provisioni
             
             
             
-              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/07/06/IP_address_manager.html">Introducing the Metal3 IP Address Manager</a></li>
-              
-              
-            
           
             
             
@@ -375,7 +488,12 @@ Next, Maël deeply explains each Custom Resource (CR) used during the provisioni
             
             
             
-              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/06/18/Metal3-dev-env-BareMetal-Cluster-Deployment.html">Metal³ development environment walkthrough part 2: Deploying a new bare metal cluster</a></li>
+          
+            
+            
+            
+            
+              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/03/05/CAPI_provider_renaming.html">Cluster API provider renaming</a></li>
               
               
             
@@ -384,7 +502,16 @@ Next, Maël deeply explains each Custom Resource (CR) used during the provisioni
             
             
             
-              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/03/05/CAPI_provider_renaming.html">Cluster API provider renaming</a></li>
+              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/02/27/talk-kubernetes-finland-metal3.html">Metal³: Kubernetes Native Bare Metal Cluster Management - Maël Kimmerlin - Kubernetes and CNCF Finland Meetup</a></li>
+              
+              
+            
+          
+            
+            
+            
+            
+              <li class="mk-blog__related-entries__item"><a class="mk-blog__related-entries__link" href="/blog/2020/02/18/metal3-dev-env-install-deep-dive.html">A detailed walkthrough of the Metal³ development environment</a></li>
               
               
                 
