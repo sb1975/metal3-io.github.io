@@ -274,7 +274,7 @@ autocomplete(document.getElementById("search-input"), mykeywords);
   <li>Metal³ is already deployed and working,  if not please follow the instructions in the previously mentioned <a href="/blog/2020/02/18/metal3-dev-env-install-deep-dive.html">detailed metal3-dev-env walkthrough blogpost</a>.</li>
   <li>The appropriate environment variables are setup via shell or in the <code class="language-html highlighter-rouge">config_${user}.sh</code> file, for example -
     <ul>
-      <li>CAPI_VERSION</li>
+      <li>CAPM3_VERSION</li>
       <li>NUM_NODES</li>
       <li>CLUSTER_NAME</li>
     </ul>
@@ -282,7 +282,7 @@ autocomplete(document.getElementById("search-input"), mykeywords);
 </ul>
 
 <h2 id="overview-of-config-and-resource-types">Overview of Config and Resource types</h2>
-<p>In this section we give a brief overview of the important config files and resources used as part of the bare metal cluster deployment. 
+<p>In this section we give a brief overview of the important config files and resources used as part of the bare metal cluster deployment.
 The following sub-sections show the config files and resources that are created and give a brief description about some of them. This will help you understand the technical details of the cluster deployment. You can also choose to skip this section, visit the next section about <em>provisioning</em> first and then revisit this.</p>
 
 <h3 id="config-files-and-resources-types">Config Files and Resources Types</h3>
@@ -404,8 +404,8 @@ The following sub-sections show the config files and resources that are created 
   </thead>
   <tbody>
     <tr>
-      <td>CAPI_VERSION</td>
-      <td>Version of Metal3 API4</td>
+      <td>CAPM3_VERSION</td>
+      <td>Version of Metal3 API</td>
       <td>v1alpha3</td>
     </tr>
     <tr>
@@ -447,7 +447,7 @@ The following sub-sections show the config files and resources that are created 
 <p><br />
 <br /></p>
 
-<p><img src="/assets/2020-06-18-Metal3-dev-env-BareMetal-Cluster-Deployment/metal3-bmetal-arch-overview.png" alt="&quot;An Overview of various resources generated while provisioning and their relationship amongst themselves&quot;" /><br />
+<p><img src="/assets/2020-06-18-Metal3-dev-env-BareMetal-Cluster-Deployment/metal3-bmetal-arch-overview.png" alt="&quot;An Overview of various resources generated while provisioning and their relationship amongst themselves&quot;" />
 <br />
 <br /></p>
 

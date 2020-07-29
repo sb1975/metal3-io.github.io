@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-29T14:28:58+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Introducing the Metal3 IP Address Manager</title><link href="https://metal3.io/blog/2020/07/06/IP_address_manager.html" rel="alternate" type="text/html" title="Introducing the Metal3 IP Address Manager" /><published>2020-07-06T00:00:00+00:00</published><updated>2020-07-06T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/06/IP_address_manager</id><content type="html" xml:base="https://metal3.io/blog/2020/07/06/IP_address_manager.html">&lt;p&gt;As a part of developing the Cluster API Provider Metal3 (CAPM3) v1alpha4
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="https://metal3.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://metal3.io/" rel="alternate" type="text/html" /><updated>2020-07-29T19:26:02+00:00</updated><id>https://metal3.io/feed.xml</id><title type="html">Metal³ - Metal Kubed</title><subtitle>Metal3.io aims to build on baremetal host provisioning technologies to provide a Kubernetes native API for managing bare metal hosts via a provisioning stack that is also running on Kubernetes.</subtitle><entry><title type="html">Introducing the Metal3 IP Address Manager</title><link href="https://metal3.io/blog/2020/07/06/IP_address_manager.html" rel="alternate" type="text/html" title="Introducing the Metal3 IP Address Manager" /><published>2020-07-06T00:00:00+00:00</published><updated>2020-07-06T00:00:00+00:00</updated><id>https://metal3.io/blog/2020/07/06/IP_address_manager</id><content type="html" xml:base="https://metal3.io/blog/2020/07/06/IP_address_manager.html">&lt;p&gt;As a part of developing the Cluster API Provider Metal3 (CAPM3) v1alpha4
 release, the Metal3 crew introduced a new project : its own IP Address Manager.
 This blog post will go through the motivations behind such a project, the
 features that it brings, its use in Metal3 and the future work.&lt;/p&gt;
@@ -309,7 +309,7 @@ feature changes the way raw images are deployed for better efficiency.&lt;/p&gt;
   &lt;li&gt;Metal³ is already deployed and working,  if not please follow the instructions in the previously mentioned &lt;a href=&quot;/blog/2020/02/18/metal3-dev-env-install-deep-dive.html&quot;&gt;detailed metal3-dev-env walkthrough blogpost&lt;/a&gt;.&lt;/li&gt;
   &lt;li&gt;The appropriate environment variables are setup via shell or in the &lt;code class=&quot;language-html highlighter-rouge&quot;&gt;config_${user}.sh&lt;/code&gt; file, for example -
     &lt;ul&gt;
-      &lt;li&gt;CAPI_VERSION&lt;/li&gt;
+      &lt;li&gt;CAPM3_VERSION&lt;/li&gt;
       &lt;li&gt;NUM_NODES&lt;/li&gt;
       &lt;li&gt;CLUSTER_NAME&lt;/li&gt;
     &lt;/ul&gt;
@@ -317,7 +317,7 @@ feature changes the way raw images are deployed for better efficiency.&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;overview-of-config-and-resource-types&quot;&gt;Overview of Config and Resource types&lt;/h2&gt;
-&lt;p&gt;In this section we give a brief overview of the important config files and resources used as part of the bare metal cluster deployment. 
+&lt;p&gt;In this section we give a brief overview of the important config files and resources used as part of the bare metal cluster deployment.
 The following sub-sections show the config files and resources that are created and give a brief description about some of them. This will help you understand the technical details of the cluster deployment. You can also choose to skip this section, visit the next section about &lt;em&gt;provisioning&lt;/em&gt; first and then revisit this.&lt;/p&gt;
 
 &lt;h3 id=&quot;config-files-and-resources-types&quot;&gt;Config Files and Resources Types&lt;/h3&gt;
@@ -439,8 +439,8 @@ The following sub-sections show the config files and resources that are created 
   &lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
-      &lt;td&gt;CAPI_VERSION&lt;/td&gt;
-      &lt;td&gt;Version of Metal3 API4&lt;/td&gt;
+      &lt;td&gt;CAPM3_VERSION&lt;/td&gt;
+      &lt;td&gt;Version of Metal3 API&lt;/td&gt;
       &lt;td&gt;v1alpha3&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
@@ -482,7 +482,7 @@ The following sub-sections show the config files and resources that are created 
 &lt;p&gt;&lt;br /&gt;
 &lt;br /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/2020-06-18-Metal3-dev-env-BareMetal-Cluster-Deployment/metal3-bmetal-arch-overview.png&quot; alt=&quot;&amp;quot;An Overview of various resources generated while provisioning and their relationship amongst themselves&amp;quot;&quot; /&gt;&lt;br /&gt;
+&lt;p&gt;&lt;img src=&quot;/assets/2020-06-18-Metal3-dev-env-BareMetal-Cluster-Deployment/metal3-bmetal-arch-overview.png&quot; alt=&quot;&amp;quot;An Overview of various resources generated while provisioning and their relationship amongst themselves&amp;quot;&quot; /&gt;
 &lt;br /&gt;
 &lt;br /&gt;&lt;/p&gt;
 
@@ -1021,8 +1021,8 @@ config_alosadag.sh
       &lt;td&gt;quay.io/metal3-io/baremetal-operator&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;CAPI_VERSION&lt;/td&gt;
-      &lt;td&gt;v1alpha1&lt;/td&gt;
+      &lt;td&gt;CAPM3_VERSION&lt;/td&gt;
+      &lt;td&gt;v1alpha3&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;CAPBM_IMAGE&lt;/td&gt;
@@ -1753,9 +1753,9 @@ boot
       &lt;td&gt; &lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;CAPI_VERSION&lt;/td&gt;
-      &lt;td&gt;v1alpha2&lt;/td&gt;
-      &lt;td&gt;v1alpha1 or v1alpha3&lt;/td&gt;
+      &lt;td&gt;CAPM3_VERSION&lt;/td&gt;
+      &lt;td&gt;v1alpha3&lt;/td&gt;
+      &lt;td&gt;v1alpha4 or v1alpha3&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
       &lt;td&gt;FORCE_REPO_UPDATE&lt;/td&gt;
